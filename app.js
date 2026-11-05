@@ -59,7 +59,7 @@ const ICON = {
   x: '<svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6 6 18" stroke="#6E655C" stroke-width="2" stroke-linecap="round"/></svg>',
   tick: '<svg viewBox="0 0 12 12" fill="none"><path d="m2.5 6.2 2.3 2.3 4.7-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   flower: '<svg viewBox="0 0 24 24"><g fill="#fff" stroke="#F4B6C9" stroke-width="1"><ellipse cx="12" cy="6.8" rx="3.6" ry="4.6"/><ellipse cx="12" cy="6.8" rx="3.6" ry="4.6" transform="rotate(72 12 12)"/><ellipse cx="12" cy="6.8" rx="3.6" ry="4.6" transform="rotate(144 12 12)"/><ellipse cx="12" cy="6.8" rx="3.6" ry="4.6" transform="rotate(216 12 12)"/><ellipse cx="12" cy="6.8" rx="3.6" ry="4.6" transform="rotate(288 12 12)"/></g><circle cx="12" cy="12" r="2.6" fill="#F7C548"/></svg>',
-  coupon: '<svg viewBox="0 0 24 24"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h15A1.5 1.5 0 0 1 21 7.5V10a2 2 0 0 0 0 4v2.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 16.5V14a2 2 0 0 0 0-4z" fill="#FF990D"/><path d="M15 6.5v11" stroke="#fff" stroke-width="1.4" stroke-dasharray="2 2"/><text x="9" y="14.6" font-size="7" font-weight="800" fill="#fff" text-anchor="middle">1천</text></svg>',
+  coupon: '<svg viewBox="0 0 24 24"><path d="M2 7a1.5 1.5 0 0 1 1.5-1.5h17A1.5 1.5 0 0 1 22 7v3.2a1.8 1.8 0 0 0 0 3.6V17a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 17v-3.2a1.8 1.8 0 0 0 0-3.6z" fill="#FF990D"/><path d="M16.5 6.5v11" stroke="#fff" stroke-width="1.3" stroke-dasharray="1.8 1.8"/><text x="10" y="14.2" font-size="6.2" font-weight="800" fill="#fff" text-anchor="middle">1천</text></svg>',
   rain: '<svg viewBox="0 0 24 24"><path d="M7 14a4 4 0 0 1-.4-8 5.5 5.5 0 0 1 10.6 1.6A3.3 3.3 0 0 1 17 14z" fill="#A9C7E2"/><path d="M8 17l-1 2.5M12 17l-1 2.5M16 17l-1 2.5" stroke="#5BA6DE" stroke-width="1.8" stroke-linecap="round"/></svg>',
 };
 
@@ -100,6 +100,7 @@ function treeSVG(sfx, cls) {
 <symbol id="${u('fl')}" viewBox="-9 -9 18 18"><g fill="url(#${u('pt')})">${petals}</g><circle r="2.4" fill="#F7C548"/><circle r="1" fill="#E3A21C"/></symbol>
 </defs>
 <ellipse cx="150" cy="311" rx="112" ry="9" fill="#2B3A1A" opacity=".12"/>
+<g class="ghost"><path d="M150 70C178 68 196 84 204 96C222 100 236 116 236 136C252 152 258 178 250 204C246 226 226 238 204 236C190 248 168 252 150 250C132 252 110 248 96 236C74 238 54 226 50 204C42 178 48 152 64 136C64 116 78 100 96 96C104 84 122 68 150 70Z" fill="#fff" fill-opacity=".13" stroke="#fff" stroke-opacity=".8" stroke-width="2" stroke-dasharray="6 6"/><path d="M141 250L139 288M159 250L162 288" stroke="#fff" stroke-opacity=".65" stroke-width="2" stroke-dasharray="5 6" fill="none"/><text x="150" y="112" text-anchor="middle" font-size="12.5" font-weight="800" fill="#fff" stroke="#4F7A43" stroke-opacity=".35" stroke-width="3" paint-order="stroke">다 자라면 이만큼!</text></g>
 <path d="M62 304C86 285 214 285 238 304C214 315 86 315 62 304Z" fill="url(#${u('soil')})"/>
 <ellipse class="wet" cx="150" cy="301" rx="54" ry="7.5" fill="#4E2E19"/>
 <path d="M84 297c3 1 6 1 9 0M204 297.5c3 1 6 1 9 0M114 292.5c2 .8 4 .8 6 0M178 291.5c2 .8 4 .8 6 0" stroke="#fff" stroke-opacity=".2" stroke-width="1.6" stroke-linecap="round" fill="none"/>
@@ -161,6 +162,8 @@ const frac = (p) => { const i = stageIdx(p); if (i >= 5) return 1; const a = STA
 const V = () => VAR[S.variety] || VAR.hongro;
 const owner = () => `${S.name || '우리 가족'}의 ${V().n}나무`;
 const won = (n) => n.toLocaleString('ko-KR') + '원';
+const josa = (w, a, b) => { const c = (w || '').charCodeAt((w || '').length - 1); return c >= 0xAC00 && c <= 0xD7A3 && (c - 0xAC00) % 28 ? a : b; };
+const NB = '\u00A0';
 const brixOf = (p) => { const a = STAGES[4].at; if (p < a) return null; return 6 + (V().brix - 6) * Math.min(1, (p - a) / (MAX - a)); };
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -234,13 +237,27 @@ function buildOrchard() {
 }
 
 let treeSvg, heroSvg, modalTreeHTML = '';
+const CRATE_SLOTS = [[20, 40], [37, 41], [54, 40], [71, 41], [88, 40], [104, 41], [28, 32], [45, 31], [62, 32], [79, 31], [96, 32], [38, 23], [60, 22], [82, 23]];
+function crateSVG(id, full) {
+  const apple = APPLE_FLY.replace(/^<svg[^>]*>/, '').replace('</svg>', '');
+  return `<svg viewBox="0 0 120 96"><defs><symbol id="${id}" viewBox="-12 -14 24 26">${apple}</symbol></defs>
+<rect x="9" y="30" width="102" height="14" rx="3" fill="#8E5E33"/>
+${CRATE_SLOTS.map(([x, y], i) => `<g transform="translate(${x} ${y})"><g class="ca${full ? ' in' : ''}" data-i="${i}"><use href="#${id}" x="-12" y="-14" width="24" height="26"/></g></g>`).join('')}
+<rect x="4" y="42" width="112" height="15" rx="3" fill="#D7A066"/><rect x="4" y="59" width="112" height="15" rx="3" fill="#C98F55"/><rect x="4" y="76" width="112" height="16" rx="3" fill="#D7A066"/>
+<path d="M16 49h28M62 51h38M20 84h22M72 86h30" stroke="#B57E47" stroke-width="1.2" stroke-linecap="round" opacity=".7"/>
+<rect x="1.5" y="38" width="10" height="56" rx="3" fill="#A86F3B"/><rect x="108.5" y="38" width="10" height="56" rx="3" fill="#A86F3B"/>
+<g fill="#7A4A22"><circle cx="6.5" cy="49" r="1.3"/><circle cx="6.5" cy="66" r="1.3"/><circle cx="6.5" cy="84" r="1.3"/><circle cx="113.5" cy="49" r="1.3"/><circle cx="113.5" cy="66" r="1.3"/><circle cx="113.5" cy="84" r="1.3"/></g>
+<text x="60" y="70.6" text-anchor="middle" font-size="11.5" font-weight="900" fill="#74441C" letter-spacing=".5">열매나무</text></svg>`;
+}
 function mountTrees() {
   E.treeIn.innerHTML = treeSVG('_t', '');
   treeSvg = E.treeIn.querySelector('svg');
   E.heroDisc.innerHTML = treeSVG('_h', '');
   heroSvg = E.heroDisc.querySelector('svg');
   paintTree(heroSvg, 5, MAX, 'hongro');
-  E.crate.innerHTML = `<svg viewBox="0 0 120 88">${[[22, 40], [42, 34], [62, 31], [82, 34], [100, 40], [52, 24], [74, 23], [32, 30], [90, 28], [62, 18], [44, 22], [80, 20], [62, 38], [28, 38]].map(([x, y], i) => `<g transform="translate(${x} ${y})"><g class="ca" data-i="${i}"><use href="#cap" x="-12" y="-14" width="24" height="26"/></g></g>`).join('')}<defs><symbol id="cap" viewBox="-12 -14 24 26">${APPLE_FLY.replace(/^<svg[^>]*>/, '').replace('</svg>', '')}</symbol></defs><rect x="4" y="40" width="112" height="46" rx="6" fill="#C98E55"/><rect x="4" y="40" width="112" height="9" rx="3" fill="#B57B45"/><path d="M8 64h104" stroke="#A8743F" stroke-width="2" opacity=".6"/><text x="60" y="80" text-anchor="middle" font-size="12.5" font-weight="900" fill="#76461E">열매나무</text></svg>`;
+  E.crate.innerHTML = crateSVG('cap', false);
+  const path = document.getElementById('pathL');
+  if (path) path.innerHTML = STAGES.map((st, k) => `<li><span>${STEP_ICON[k]}</span>${st.n}</li>`).join('');
 }
 
 function renderSteps(idx, p) {
@@ -275,7 +292,8 @@ function render() {
   const b = brixOf(S.pts);
   if (b !== null && !done) {
     E.pSide.className = 'p-side tap';
-    E.pSide.innerHTML = `<u>당도</u><b>${b.toFixed(1)}<small style="font-size:11px;color:#9A9087"> / ${v.brix} 브릭스</small></b><span class="meter" style="--m:${Math.min(100, ((b - 6) / (v.brix - 6)) * 100).toFixed(0)}%"><i></i></span>`;
+    const mc = appleColors(idx >= 5 ? 1 : frac(S.pts), v.red).mid;
+    E.pSide.innerHTML = `<u>당도</u><b>${b.toFixed(1)}<small style="font-size:11px;color:#9A9087"> / ${v.brix}${NB}브릭스</small></b><span class="meter" style="--m:${Math.min(100, (b / v.brix) * 100).toFixed(0)}%;--mc:${mc}"><i></i></span>`;
   } else {
     E.pSide.className = 'p-side';
     E.pSide.innerHTML = `물 준 날<b>${S.waterDays}일</b>${S.orders ? `<span>주문 ${S.orders}번</span>` : ''}`;
@@ -306,17 +324,22 @@ function toast(msg, ms) {
 }
 let notiT;
 function noti(msg, delay) {
-  setTimeout(() => {
+  const show = (tries) => {
+    if ((modalOpen || sheetOpen) && tries < 30) { setTimeout(() => show(tries + 1), 400); return; }
     E.notiMsg.textContent = msg;
     E.noti.classList.add('on');
+    E.app.classList.add('noti-on');
     clearTimeout(notiT);
-    notiT = setTimeout(() => E.noti.classList.remove('on'), 4200);
-  }, delay || 0);
+    notiT = setTimeout(hideNoti, 4200);
+  };
+  setTimeout(() => show(0), delay || 0);
 }
+function hideNoti() { E.noti.classList.remove('on'); E.app.classList.remove('noti-on'); }
 
 let sheetOpen = false, modalOpen = false;
 function openSheet(t, p, body, bind) {
   hideCoach();
+  hideNoti();
   E.sheetT.textContent = t;
   E.sheetP.textContent = p;
   E.sheetB.innerHTML = body;
@@ -333,6 +356,7 @@ function closeSheet() {
 }
 function openModal(html, bind) {
   hideCoach();
+  hideNoti();
   E.modal.innerHTML = html;
   E.modal.scrollTop = 0;
   E.modal.classList.add('on');
@@ -351,7 +375,9 @@ function modalTree(idx) {
 }
 function paintModalTree(idx) {
   const svg = E.modal.querySelector('.m-art svg');
-  if (svg) paintTree(svg, idx, idx === 4 ? STAGES[4].at + 2 : S.pts, S.variety);
+  if (!svg) return;
+  paintTree(svg, idx, idx === 4 ? STAGES[4].at + 1 : S.pts, S.variety);
+  if (idx === 4) svg.style.setProperty('--apz', '0.95');
 }
 
 let coachT;
@@ -420,38 +446,37 @@ function pour(kind, side) {
     const { w, h } = wrapRect(), idx = stageIdx(S.pts);
     const isSack = kind === 'sack';
     const tw = w * (isSack ? 0.2 : 0.26), th = tw * (isSack ? 62 / 56 : 48 / 64);
-    const topF = [0.66, 0.58, 0.42, 0.07, 0.07, 0.07][idx];
-    const left = side === 'l' ? w * 0.1 : w * 0.64;
-    const top = h * topF;
-    const tool = fxEl('tool', left, top, isSack ? SACK_BIG : ICON.canColor);
-    tool.style.width = tw + 'px';
-    tool.style.height = th + 'px';
     const flip = side === 'l' && !isSack ? -1 : 1;
     const rot = isSack ? (side === 'l' ? 40 : -40) : side === 'l' ? 32 : -32;
-    tool.firstChild.style.transform = `scaleX(${flip})`;
-    tool.animate([{ opacity: 0, transform: 'translate(10px,-14px) rotate(0)' }, { opacity: 1, transform: 'translate(0,0) rotate(0)', offset: 0.18 }, { transform: `rotate(${rot}deg)`, offset: 0.32 }, { transform: `rotate(${rot}deg)`, offset: 0.82 }, { opacity: 0, transform: 'translate(6px,-8px) rotate(0)' }], { duration: 1650, easing: 'ease-in-out' }).onfinish = () => tool.remove();
-    const ox = left + tw * 0.6, oy = top + th * 0.6;
+    const a = (rot * Math.PI) / 180, ox = tw * 0.6, oy = th * 0.6;
     let tx, ty;
-    if (isSack) { tx = side === 'l' ? left + tw * 0.92 : left + tw * 0.08; ty = top + th * 0.2; }
-    else { tx = flip < 0 ? left + tw * (1 - 2 / 64) : left + tw * (2 / 64); ty = top + th * (13 / 48); }
-    const th2 = (rot * Math.PI) / 180, dx = tx - ox, dy = ty - oy;
-    const sx = ox + dx * Math.cos(th2) - dy * Math.sin(th2), sy = oy + dx * Math.sin(th2) + dy * Math.cos(th2);
+    if (isSack) { tx = side === 'l' ? tw * 0.92 : tw * 0.08; ty = th * 0.2; }
+    else { tx = flip < 0 ? tw * (1 - 2 / 64) : tw * (2 / 64); ty = th * (13 / 48); }
+    const dx = tx - ox, dy = ty - oy;
+    const relX = ox + dx * Math.cos(a) - dy * Math.sin(a), relY = oy + dx * Math.sin(a) + dy * Math.cos(a);
+    const aimX = w * 0.5 + (side === 'l' ? -10 : 10);
+    const aimY = h * [0.7, 0.62, 0.46, 0.1, 0.1, 0.1][idx];
+    const tool = fxEl('tool', aimX - relX, aimY - relY, isSack ? SACK_BIG : ICON.canColor);
+    tool.style.width = tw + 'px';
+    tool.style.height = th + 'px';
+    tool.firstChild.style.transform = `scaleX(${flip})`;
+    tool.animate([{ opacity: 0, transform: 'translate(10px,-14px) rotate(0)' }, { opacity: 1, transform: 'translate(0,0) rotate(0)', offset: 0.18 }, { opacity: 1, transform: `rotate(${rot}deg)`, offset: 0.32 }, { opacity: 1, transform: `rotate(${rot}deg)`, offset: 0.82 }, { opacity: 0, transform: 'translate(6px,-8px) rotate(0)' }], { duration: 1650, easing: 'ease-in-out' }).onfinish = () => tool.remove();
     const soilY = h * 0.925;
     const count = isSack ? 22 : 16;
     setTimeout(() => {
       if (isSack) sfx.big(); else sfx.water();
       for (let i = 0; i < count; i++) {
         setTimeout(() => {
-          const d = fxEl(isSack ? 'grain' : 'drop', sx + (Math.random() * 8 - 4), sy, '');
+          const d = fxEl(isSack ? 'grain' : 'drop', aimX + (Math.random() * 8 - 4), aimY, '');
           if (isSack) d.style.background = ['#C8962E', '#A9772A', '#E0B85A'][i % 3];
-          const fall = soilY - sy + (Math.random() * 10 - 5);
-          const drift = (side === 'l' ? 1 : -1) * (6 + Math.random() * 18) * (isSack ? 1.6 : 1);
+          const fall = soilY - aimY + (Math.random() * 10 - 5);
+          const drift = (w * 0.5 - aimX) + (Math.random() * 16 - 8) * (isSack ? 1.8 : 1);
           d.animate([{ transform: 'translate(0,0) scale(.6)', opacity: 0.95 }, { transform: `translate(${drift}px,${fall}px) scale(1)`, opacity: 0.95, offset: 0.92 }, { transform: `translate(${drift}px,${fall}px) scale(.3)`, opacity: 0 }], { duration: 520 + Math.random() * 260, easing: 'cubic-bezier(.45,0,.9,.6)' }).onfinish = () => d.remove();
         }, i * 45);
       }
       setTimeout(() => {
-        const r = fxEl('ring', w / 2 - 20, soilY - 6, '');
-        r.animate([{ transform: 'scale(.4)', opacity: 0.9 }, { transform: 'scale(2.2)', opacity: 0 }], { duration: 700, easing: 'ease-out' }).onfinish = () => r.remove();
+        const rg = fxEl('ring', w / 2 - 20, soilY - 6, '');
+        rg.animate([{ transform: 'scale(.4)', opacity: 0.9 }, { transform: 'scale(2.2)', opacity: 0 }], { duration: 700, easing: 'ease-out' }).onfinish = () => rg.remove();
         if (!isSack) wetSoil();
       }, 520);
     }, 420);
@@ -473,8 +498,8 @@ function giftPop() {
 
 function friendTag(name) {
   const { w, h } = wrapRect();
-  const t = fxEl('friend-tag', w * 0.06, h * Math.max(0.02, [0.6, 0.52, 0.36, 0.02, 0.02, 0.02][stageIdx(S.pts)]), '');
-  t.textContent = `${name}님이 물을 줬어요`;
+  const t = fxEl('friend-tag', w * 0.04, h * [0.8, 0.74, 0.58, 0.26, 0.26, 0.26][stageIdx(S.pts)], '');
+  t.textContent = `${name}${josa(name, '이', '가')} 물을 줬어요`;
   t.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none', offset: 0.15 }, { opacity: 1, offset: 0.85 }, { opacity: 0 }], { duration: 1900 }).onfinish = () => t.remove();
 }
 
@@ -492,36 +517,40 @@ async function grow(n, src) {
   buzz(src === 'order' ? 30 : 12);
   if (src === 'water' || src === 'friend') sfx.grow();
   render();
-  if (after > before) { await wait(700); stageUp(after, src); }
+  if (after > before) { await wait(700); stageUp(after, src, before); }
   else afterAction(src);
 }
 
 function afterAction(src) {
-  if (src === 'water' && S.coach < 1) { S.coach = 1; save(); setTimeout(() => coach('dDay', '체험용 버튼이에요. 눌러서 내일로 넘어가 보세요', 'below'), 400); }
+  if (src !== 'water') return;
+  if (S.coach === 0) { S.coach = 1; save(); setTimeout(() => coach('dDay', '체험용 버튼이에요. 눌러서 내일로 넘어가 보세요', 'below'), 400); }
+  else if (S.coach === 2) { S.coach = 3; save(); setTimeout(() => coach('btnShop', '오늘 물은 다 줬어요. 사과를 사면 거름이 와요 — 눌러 보세요', 'above'), 400); }
 }
 
 const STAGE_TXT = {
-  1: { t: '새싹이 돋았어요!', p: () => `물을 잘 마셨어요. 어린 나무까지 물 ${STAGES[2].at - S.pts}번 남았어요.` },
-  2: { t: '어린 나무가 됐어요!', p: () => `가지가 뻗기 시작했어요. 꽃이 피기까지 물 ${STAGES[3].at - S.pts}번 남았어요.` },
+  1: { t: '새싹이 돋았어요!', p: () => `물을 잘 마셨어요. 어린 나무까지 물${NB}${STAGES[2].at - S.pts}번${NB}남았어요.` },
+  2: { t: '어린 나무가 됐어요!', p: () => `가지가 뻗기 시작했어요. 꽃이 피기까지 물${NB}${STAGES[3].at - S.pts}번${NB}남았어요.` },
   3: { t: '사과꽃이 피었어요!', p: () => '봄날 거창 과수원처럼 하얀 사과꽃이 가득해요.', gift: () => ({ ic: ICON.flower, b: '꽃 소식 알림톡', s: '과수원 꽃 사진과 함께 보내 드려요' }) },
   4: { t: '열매가 맺혔어요!', p: () => '작은 풋사과가 열렸어요. 이제 당도가 오를 차례예요.', gift: () => ({ ic: ICON.coupon, b: '1,000원 쿠폰', s: '1만 원 이상 주문 때 · 쿠폰함에 넣었어요' }) },
-  5: { t: '빨갛게 다 익었어요!', p: () => `당도 ${V().brix} 브릭스까지 올랐어요. 이제 수확할 수 있어요!`, gift: () => ({ img: V().rwImg, b: V().rw, s: '수확하면 교환권으로 드려요 · 배송비 없음' }) },
+  5: { t: '빨갛게 다 익었어요!', p: () => `당도 ${V().brix}${NB}브릭스까지 올랐어요. 이제 수확할 수${NB}있어요!`, gift: () => ({ img: V().rwImg, b: V().rw, s: '수확하면 교환권으로 드려요 · 배송비 없음' }) },
 };
-function stageUp(idx, src) {
+function stageUp(idx, src, before) {
   sfx.stage();
   buzz(40);
   const T = STAGE_TXT[idx];
+  const prev = STAGES[idx - 1].n;
+  const jump = typeof before === 'number' && idx - before > 1 ? `쑥 자라서 ${prev}${josa(prev, '을', '를')} 건너뛰었어요. ` : '';
   if (idx === 4 && !S.given['f' + S.trees]) { S.given['f' + S.trees] = 1; S.coupons.push({ t: '1,000원 쿠폰', day: S.day }); save(); }
   if (idx >= 3) confetti(idx === 5 ? 140 : 70);
   const gf = T.gift ? T.gift() : null;
-  openModal(`${modalTree(idx)}<p class="m-kicker">${idx + 1}단계 · ${STAGES[idx].n}</p><h3>${T.t}</h3><p>${T.p()}</p>${gf ? `<div class="m-gift"><span class="gi">${gf.img ? `<img src="${gf.img}" alt="">` : gf.ic}</span><span><b>${gf.b}</b><span>${gf.s}</span></span></div>` : ''}<button class="btn-l" id="mOk">${idx === 5 ? '수확하러 가기' : '좋아요'}</button>`, (m) => {
+  openModal(`${modalTree(idx)}<p class="m-kicker">${idx + 1}단계 · ${STAGES[idx].n}</p><h3>${T.t}</h3><p>${jump}${T.p()}</p>${gf ? `<div class="m-gift"><span class="gi">${gf.img ? `<img src="${gf.img}" alt="">` : gf.ic}</span><span><b>${gf.b}</b><span>${gf.s}</span></span></div>` : ''}<button class="btn-l" id="mOk">${idx === 5 ? '수확하러 가기' : '좋아요'}</button>`, (m) => {
     paintModalTree(idx);
     m.querySelector('#mOk').onclick = () => {
       sfx.tap();
       closeModal();
       if (idx === 3) noti(`${owner()}에 사과꽃이 피었어요. 거창 과수원 꽃 소식도 함께 보내 드려요.`, 350);
       if (idx === 4) noti('열매가 맺혔어요! 1,000원 쿠폰이 쿠폰함에 들어갔어요.', 350);
-      if (idx === 5) { noti(`${owner()}가 다 익었어요. 지금 수확하러 오세요!`, 350); E.btnMain.classList.add('nudge'); setTimeout(() => E.btnMain.classList.remove('nudge'), 4000); }
+      if (idx === 5) { noti(`${owner()}가 다 익었어요. 지금 수확하러${NB}오세요!`, 350); E.btnMain.classList.add('nudge'); setTimeout(() => E.btnMain.classList.remove('nudge'), 4000); }
       afterAction(src);
     };
   });
@@ -560,7 +589,7 @@ function nextDay() {
     return;
   }
   setTimeout(() => toast(`${S.day}일째 아침이에요 · 물을 줄 수 있어요`), 500);
-  if (S.coach === 1) { S.coach = 2; save(); setTimeout(() => coach('btnShop', '사과를 사면 거름이 와요. 눌러서 주문한 셈 쳐 보세요', 'above'), 1400); }
+  if (S.coach === 1) { S.coach = 2; save(); }
 }
 
 async function skipStage() {
@@ -593,7 +622,7 @@ function openShop() {
   sfx.tap();
   const ready = stageIdx(S.pts) >= 5 || S.phase === 'done';
   const body = SHOP.map((s, i) => `<div class="shop-item"><img src="${s.img}" alt=""><div class="si"><div class="sn">${s.n}</div><div class="sp">${won(s.p)}<s>${won(s.op)}</s></div><div class="sb"><span class="tag">당도 ${s.b}브릭스</span><span class="tag g">거름 1포대</span></div></div><button class="btn-s" data-i="${i}" ${ready ? 'disabled' : ''}>${ready ? '수확 먼저' : '주문한 셈<small>체험</small>'}</button></div>`).join('') + '<p class="fine">체험용이라 실제로 주문되지 않아요. 실제로는 쇼핑몰에서 주문이 확정되면 자동으로 거름이 들어가요. 가격은 11월 5일 쇼핑몰 기준입니다.</p>';
-  openSheet('사과를 사면 거름이 와요', `주문이 확정되면 내 나무에 거름 1포대가 들어가요. 거름 1포대면 물 ${ORDER}번 몫이 한 번에 자라요.`, body, (b) => {
+  openSheet('사과를 사면 거름이 와요', `주문이 확정되면 내 나무에 거름${NB}1포대가 들어가요. 거름${NB}1포대면 물${NB}${ORDER}번 몫이 한 번에 자라요.`, body, (b) => {
     b.querySelectorAll('.btn-s').forEach((btn) => { btn.onclick = () => buyFake(SHOP[+btn.dataset.i]); });
   });
 }
@@ -618,7 +647,7 @@ function openFriend() {
   const left = FRIEND_MAX - S.friendCnt;
   const ready = stageIdx(S.pts) >= 5 || S.phase === 'done';
   const body = `<div class="talk"><p class="who">열매나무</p><div class="bub"><b>[열매나무] 물 한 번만 부탁해요</b>${owner()}가 목말라요! 아래 버튼을 눌러 물을 주면, 친구분도 물 1번을 받아요.<span class="lk">물 주러 가기</span></div></div><div class="gap"></div><button class="btn-l kakao" id="fGo" ${left <= 0 || ready ? 'disabled' : ''}>${ICON.talk.replace('<svg', '<svg width="22" height="22"')}카카오톡으로 부탁하기</button><p class="fine">체험: 누르면 친구 한 명이 물을 준 셈 쳐요 (오늘 ${S.friendCnt}/${FRIEND_MAX}명). 실제로는 카카오톡 공유로 보냅니다.</p>`;
-  openSheet('친구에게 물을 부탁해요', `친구가 눌러서 물을 주면 둘 다 물 1번을 받아요. 하루 ${FRIEND_MAX}명까지예요.`, body, (b) => {
+  openSheet('친구에게 물을 부탁해요', `친구가 눌러서 물을 주면 둘 다 물${NB}1번을 받아요. 하루${NB}${FRIEND_MAX}명까지예요.`, body, (b) => {
     b.querySelector('#fGo').onclick = async () => {
       if (busy) return;
       if (S.friendCnt >= FRIEND_MAX) { toast('오늘 친구 물은 다 받았어요'); return; }
@@ -640,8 +669,8 @@ function openGift() {
   if (busy) return;
   sfx.tap();
   const ready = stageIdx(S.pts) >= 5 || S.phase === 'done';
-  const body = `<div class="card3d" id="gCard"><div class="cin"><div class="cf">${SEED_CARD_ART}<div><p>열매나무 선물 상자 속</p><h4>거창에서 온<br>사과 씨앗 한 알</h4><span class="from">${S.name || '우리 가족'} 님이 보냄</span></div></div><div class="cb"><img src="img/qr_gift.svg" alt="선물 받은 분 화면 QR"><div><b>폰 카메라로<br>QR을 찍어 보세요</b><span>바로 내 사과나무가 심어지고, 보내신 분께 물 ${GIFT_PTS}번이 가요.</span><img class="logo" src="img/logo.png" alt="열매나무"></div></div></div></div><div class="gap"></div><div class="btn-row"><button class="btn-l line" id="gFlip">카드 뒤집기</button><button class="btn-l green" id="gGo" ${ready ? 'disabled' : ''}>받은 분이 심은 셈</button></div><p class="fine">체험: 다른 폰 카메라로 카드 뒷면 QR을 찍으면, 선물 받은 분이 보는 첫 화면이 열려요.</p>`;
-  openSheet('선물 상자에 씨앗 한 알', `선물로 사과를 보내면 상자에 씨앗 카드를 넣어 드려요. 받은 분이 카드의 QR을 찍으면 그분의 나무가 생기고, 보낸 분께는 물 ${GIFT_PTS}번이 와요.`, body, (b) => {
+  const body = `<div class="card3d" id="gCard"><div class="cin"><div class="cf">${SEED_CARD_ART}<div><p>열매나무 선물 상자 속</p><h4>거창에서 온<br>사과 씨앗 한 알</h4><span class="from">${S.name || '우리 가족'}${josa(S.name || '우리 가족', '이', '가')} 보냄</span></div></div><div class="cb"><img src="img/qr_gift.svg" alt="선물 받은 분 화면 QR"><div><b>폰 카메라로<br>QR을 찍어 보세요</b><span>바로 내 사과나무가 심어지고, 보내신 분께 물 ${GIFT_PTS}번이 가요.</span><img class="logo" src="img/logo.png" alt="열매나무"></div></div></div></div><div class="gap"></div><div class="btn-row"><button class="btn-l line" id="gFlip">카드 뒤집기</button><button class="btn-l green" id="gGo" ${ready ? 'disabled' : ''}>받은 분이 심은 셈</button></div><p class="fine">체험: 다른 폰 카메라로 카드 뒷면 QR을 찍으면, 선물 받은 분이 보는 첫 화면이${NB}열려요.</p>`;
+  openSheet('선물 상자에 씨앗 한 알', `선물로 사과를 보내면 상자에 씨앗 카드를 넣어 드려요. 받은 분이 카드의 QR을 찍으면 그분의 나무가 생기고, 보낸 분께는 물${NB}${GIFT_PTS}번이 와요.`, body, (b) => {
     b.querySelector('#gFlip').onclick = () => { sfx.tap(); b.querySelector('#gCard').classList.toggle('flip'); };
     b.querySelector('#gCard').onclick = () => { sfx.tap(); b.querySelector('#gCard').classList.toggle('flip'); };
     b.querySelector('#gGo').onclick = async () => {
@@ -662,7 +691,7 @@ function openBrix() {
   if (stageIdx(S.pts) < 4 || S.phase === 'done') return;
   sfx.tap();
   const b = brixOf(S.pts);
-  openSheet('당도가 오르면 수확해요', `지금 ${b.toFixed(1)} 브릭스예요. ${V().n}는 쇼핑몰에 적힌 당도 ${V().brix} 브릭스까지 오르면 수확할 수 있어요.`, `<img class="info-img" src="img/brix.jpg" alt="당도계로 사과 당도를 재는 모습"><p class="fine">쇼핑몰 ‘당도 체크’처럼 당도계로 잰 숫자를 게임에서도 보여 주는 방식입니다. 사진은 열매나무 쇼핑몰 당도 체크 사진입니다.</p>`);
+  openSheet('당도가 오르면 수확해요', `지금 ${b.toFixed(1)}${NB}브릭스예요. ${V().n}${josa(V().n, '은', '는')} 쇼핑몰에 적힌 당도 ${V().brix}${NB}브릭스까지 오르면 수확할 수 있어요.`, `<img class="info-img" src="img/brix.jpg" alt="당도계로 사과 당도를 재는 모습"><p class="fine">쇼핑몰 ‘당도 체크’처럼 당도계로 잰 숫자를 게임에서도 보여 주는 방식입니다. 사진은 열매나무 쇼핑몰 당도 체크 사진입니다.</p>`);
 }
 
 async function harvest() {
@@ -699,7 +728,7 @@ async function harvest() {
   sfx.harvest(); buzz(60);
   confetti(160);
   const v = V();
-  openModal(`<p class="m-kicker">${S.trees + 1}번째 나무 · 수확</p><h3>수확 완료!</h3><p>${owner()}에서 사과 ${APPLES.length}알을 땄어요.<br>약속한 사과를 교환권으로 드려요.</p><div class="ticket"><div class="tl"><p>내 나무 사과 교환권</p><b>${v.rw}</b><span>배송비 없음 · 90일 안에 쓰기</span></div><div class="tr"><img src="${v.rwImg}" alt=""></div></div><div class="btn-row"><button class="btn-l line" id="mNext">다음 주문에 함께</button><button class="btn-l" id="mNow">바로 보내 주세요</button></div><p class="fine">체험용 교환권이에요 · 실제로는 쿠폰함에 들어갑니다</p>`, (m) => {
+  openModal(`<div class="m-crate">${crateSVG('capm', true)}</div><p class="m-kicker">${S.trees + 1}번째 나무 · 수확</p><h3>수확 완료!</h3><p>${owner()}에서 사과 ${APPLES.length}알을 땄어요.<br>약속한 사과를 교환권으로 드려요.</p><div class="ticket"><div class="tl"><p>내 나무 사과 교환권</p><b>${v.rw}</b><span>배송비 없음 · 90일 안에 쓰기</span></div><div class="tr"><img src="${v.rwImg}" alt=""></div></div><div class="btn-row"><button class="btn-l line" id="mNext">다음 주문에 함께</button><button class="btn-l" id="mNow">바로 보내 주세요</button></div><p class="fine">체험용 교환권이에요 · 실제로는 쿠폰함에 들어갑니다</p>`, (m) => {
     const take = (how) => {
       sfx.tap();
       S.coupons.push({ t: v.rw + ' 교환권', how, day: S.day });
@@ -736,7 +765,7 @@ function closeIntro() { E.intro.classList.add('off'); }
 let pickVar = 'hongro';
 function renderVars() {
   pickVar = S.variety || 'hongro';
-  E.vars.innerHTML = Object.entries(VAR).map(([k, v]) => `<button class="var ${k === pickVar ? 'on' : ''}" data-k="${k}"><img src="${v.img}" alt="${v.n} 사과"><span><span class="vn">${v.n}</span><span class="vd" style="display:block">${v.desc} · 당도 ${v.brix} 브릭스</span><span class="vr" style="display:block">다 키우면 ${v.rw}</span></span><span class="chk">${ICON.tick}</span></button>`).join('');
+  E.vars.innerHTML = Object.entries(VAR).map(([k, v]) => `<button class="var ${k === pickVar ? 'on' : ''}" data-k="${k}"><img src="${v.img}" alt="${v.n} 사과"><span><span class="vn">${v.n}</span><span class="vd" style="display:block">${v.desc} · 당도${NB}${v.brix}${NB}브릭스</span><span class="vr" style="display:block">다 키우면 ${v.rw}</span></span><span class="chk">${ICON.tick}</span></button>`).join('');
   E.vars.querySelectorAll('.var').forEach((b) => {
     b.onclick = () => { sfx.tap(); pickVar = b.dataset.k; E.vars.querySelectorAll('.var').forEach((x) => x.classList.toggle('on', x === b)); updatePreview(); };
   });
@@ -771,7 +800,7 @@ async function plant() {
   if (GIFT && first) { toast('선물 씨앗을 심었어요! 보내신 분께도 물 3번이 갔어요', 2800); }
   else toast(first ? '씨앗을 심었어요! 첫 물을 줘 볼까요?' : `${S.trees + 1}번째 나무를 심었어요!`, 2600);
   E.btnMain.classList.add('nudge');
-  if (first && S.coach === 0) setTimeout(() => coach('btnMain', '하루 한 번, 눌러서 물을 줘요', 'above'), 2700);
+  if (first && S.coach === 0) setTimeout(() => { if (S.lastWater === 0 && !busy && !modalOpen && !sheetOpen) coach('btnMain', '하루 한 번, 눌러서 물을 줘요', 'above'); }, 2700);
 }
 
 function confetti(n) {
@@ -828,7 +857,15 @@ function init() {
   E.dReset.onclick = askReset;
   E.sheetX.onclick = () => { sfx.tap(); closeSheet(); };
   E.backdrop.onclick = () => { if (!modalOpen) closeSheet(); };
-  E.noti.onclick = () => E.noti.classList.remove('on');
+  E.noti.onclick = hideNoti;
+  const unscroll = (el) => el.addEventListener('scroll', () => { if (el.scrollTop || el.scrollLeft) { el.scrollTop = 0; el.scrollLeft = 0; } });
+  unscroll(E.app);
+  unscroll(E.scene);
+  E.app.addEventListener('click', () => {
+    if (window.innerWidth >= 1000) return;
+    const y = window.scrollY;
+    if (y > 0 && y < E.app.offsetHeight) window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, true);
   E.btnSound.onclick = () => { S.sound = !S.sound; save(); setSoundIcon(); if (S.sound) sfx.tap(); };
   E.goB.onclick = () => { sfx.tap(); showPage('B'); };
   E.backB.onclick = () => { sfx.tap(); if (introReplant) closeIntro(); else showPage('A'); };
