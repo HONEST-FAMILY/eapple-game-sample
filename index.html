@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>열매나무 ‘내 사과나무’ — 게임 샘플</title>
+<meta name="description" content="사과를 사면 자라고, 다 키우면 진짜 거창 사과가 오는 ‘내 사과나무’ — 열매나무 게임 체험용 샘플">
+<meta property="og:type" content="website">
+<meta property="og:title" content="열매나무 ‘내 사과나무’ 게임 샘플">
+<meta property="og:description" content="사과를 사면 자라고, 다 키우면 진짜 거창 사과가 와요. 폰에서 눌러 보는 체험용 샘플입니다.">
+<meta property="og:image" content="https://honest-family.github.io/eapple-game-sample/img/og.jpg">
+<meta name="theme-color" content="#FFF9F0">
+<link rel="icon" href="img/favicon.png">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+<div class="page" id="top">
+<div class="phone">
+<div id="app">
+  <header class="hd">
+    <img class="logo" src="img/logo.png" alt="열매나무" width="88" height="22">
+    <span class="hd-title">내 사과나무</span>
+    <div class="hd-right">
+      <button class="ic" id="btnSound" aria-label="소리 끄기"></button>
+      <a class="hd-guide" href="#guide">샘플 설명</a>
+    </div>
+  </header>
+
+  <main class="scene" id="scene">
+    <svg class="bg" viewBox="0 0 390 600" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      <defs>
+        <linearGradient id="bSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--sky1)"/><stop offset="1" style="stop-color:var(--sky2)"/></linearGradient>
+        <radialGradient id="bSun"><stop offset="0" stop-color="#FFF8DC"/><stop offset=".4" stop-color="#FFEFB8" stop-opacity=".85"/><stop offset="1" stop-color="#FFEFB8" stop-opacity="0"/></radialGradient>
+        <linearGradient id="bHill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--hill1)"/><stop offset="1" style="stop-color:var(--hill2)"/></linearGradient>
+        <linearGradient id="bGr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--gr1)"/><stop offset="1" style="stop-color:var(--gr2)"/></linearGradient>
+        <symbol id="mt" viewBox="-10 -24 20 26">
+          <rect x="-1.3" y="-7" width="2.6" height="8" rx="1.2" fill="#80593A"/>
+          <circle cy="-13" r="8.5" style="fill:var(--orch)"/>
+          <circle cx="-3" cy="-16" r="3.4" fill="#fff" opacity=".2"/>
+          <g style="opacity:var(--orchA)"><circle cx="-3.6" cy="-10" r="1.7" fill="#E5392E"/><circle cx="3.6" cy="-13" r="1.7" fill="#E5392E"/><circle cx="0" cy="-17.4" r="1.5" fill="#E5392E"/></g>
+        </symbol>
+      </defs>
+      <rect width="390" height="600" fill="url(#bSky)"/>
+      <circle class="sun" cx="306" cy="150" r="74" fill="url(#bSun)"/>
+      <circle cx="306" cy="150" r="21" fill="#FFF4C8"/>
+      <path d="M0 352C34 336 62 300 104 302C142 304 160 270 204 262C246 255 272 292 312 296C344 299 366 282 390 286L390 600L0 600Z" style="fill:var(--mt1)"/>
+      <path d="M0 398C46 372 92 360 134 372C172 383 204 350 252 348C300 346 332 377 390 364L390 600L0 600Z" style="fill:var(--mt2)"/>
+      <path d="M0 440Q100 416 200 432T390 424L390 600L0 600Z" fill="url(#bHill)"/>
+      <g id="orchRows"></g>
+      <path d="M0 512C80 492 310 492 390 512L390 600L0 600Z" fill="url(#bGr)"/>
+      <path d="M0 512C80 492 310 492 390 512" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="2"/>
+    </svg>
+    <div class="cloud c1"></div><div class="cloud c2"></div>
+    <div class="petals" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+
+    <div class="demo" id="demo">
+      <span class="demo-tag">체험용</span>
+      <span class="demo-day" id="demoDay">1일째</span>
+      <button class="d-main" id="dDay">하루 넘기기</button>
+      <button id="dSkip">다음 단계로</button>
+      <button id="dReset">처음부터</button>
+    </div>
+    <div class="season" id="season"></div>
+
+    <div class="tree-wrap" id="treeWrap">
+      <div class="tree-bounce" id="treeBounce"><div class="tree-in" id="treeIn"></div></div>
+      <div class="fx" id="fx"></div>
+    </div>
+    <div class="sign hide" id="sign"><span class="sign-board"><em id="signName">우리 가족</em>의<br><b id="signVar">홍로</b>나무</span><span class="sign-post"></span></div>
+    <div class="crate" id="crate"></div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </main>
+
+  <section class="panel" id="panel">
+    <div class="p-row">
+      <div class="p-main">
+        <div class="p-stage"><span class="badge" id="pBadge">1단계</span><span id="pStage">씨앗</span></div>
+        <div class="p-count" id="pCount" aria-live="polite"></div>
+      </div>
+      <div class="p-side" id="pSide"></div>
+    </div>
+    <div class="steps"><div class="track"></div><div class="fill" id="stepsFill"></div><ol id="steps"></ol></div>
+    <div class="reward" id="reward"><img id="rewardImg" src="img/shop_hanip.jpg" alt=""><span>다 키우면 <b id="rewardName">홍로 한입사과 1박스</b> · 배송비 없음</span></div>
+  </section>
+
+  <nav class="actions">
+    <button class="btn-main" id="btnMain"><span class="ico" id="mainIco"></span><span class="t" id="mainT">물 주기</span><span class="s" id="mainS">하루 한 번 · 3초</span></button>
+    <div class="subs">
+      <button class="sub" id="btnShop"><i id="icShop"></i><b>거름 받기</b><small>사과 사면 쑥</small></button>
+      <button class="sub" id="btnFriend"><i id="icFriend"></i><b>친구 부탁</b><small>둘 다 물 1번</small></button>
+      <button class="sub" id="btnGift"><i id="icGift"></i><b>선물 씨앗</b><small>받은 분도 키워요</small></button>
+    </div>
+  </nav>
+
+  <div class="noti" id="noti" role="status" aria-live="polite">
+    <span class="k" id="notiIc"></span>
+    <div><div class="nt">알림톡 · 열매나무 <em>미리보기</em></div><div class="nm" id="notiMsg"></div></div>
+  </div>
+  <div class="backdrop" id="backdrop"></div>
+  <div class="sheet" id="sheet" role="dialog" aria-modal="true">
+    <div class="grab"></div>
+    <div class="sheet-hd"><h3 id="sheetT"></h3><p id="sheetP"></p><button class="ic sheet-x" id="sheetX" aria-label="닫기"></button></div>
+    <div class="sheet-bd" id="sheetB"></div>
+  </div>
+  <div class="modal" id="modal" role="dialog" aria-modal="true"></div>
+  <div class="coach" id="coach"></div>
+  <canvas class="confetti" id="confetti"></canvas>
+
+  <div class="intro" id="intro">
+    <section class="ip" id="ipA">
+      <div class="ip-top"><img class="logo" src="img/logo.png" alt="열매나무" width="88" height="22"><span class="tag">게임 샘플</span></div>
+      <div class="gift-ribbon" id="giftRibbon" hidden><i id="icGift2"></i><span>선물 상자 속 씨앗 카드로 오셨네요! 씨앗을 심으면 보내신 분께도 물이 가요.</span></div>
+      <div class="hero"><div class="disc" id="heroDisc"></div><div class="ph"><img src="img/hongro.jpg" alt="열매나무 홍로 사과"></div><span class="ph-l">열매나무 홍로</span></div>
+      <h1>거창 사과를 사면<br><em>내 사과나무</em>가 자라요</h1>
+      <ul class="how">
+        <li><i id="hw1"></i><span><b>사과를 사면 거름</b> — 한 번에 쑥 자라요</span></li>
+        <li><i id="hw2"></i><span><b>하루 한 번 물 주기</b> — 3초면 끝나요</span></li>
+        <li><i id="hw3"></i><span><b>다 키우면 진짜 사과</b> — 거창 사과 한 상자</span></li>
+      </ul>
+      <div class="ip-cta"><button class="btn-l" id="goB">내 나무 심으러 가기</button><p class="fine">체험용 샘플 · 실제 주문·결제와 연결되어 있지 않아요</p></div>
+    </section>
+    <section class="ip r" id="ipB">
+      <div class="ip-top"><button class="ip-back" id="backB" aria-label="뒤로"></button><span class="ip-stepn">1 / 2</span></div>
+      <h2>어떤 사과나무를<br>키울까요?</h2>
+      <p class="sub-t">다 키우면 고른 품종의 거창 사과로 드려요.</p>
+      <div class="vars" id="vars"></div>
+      <div class="grow"></div>
+      <div class="ip-cta"><button class="btn-l" id="goC">이 나무로 할게요</button></div>
+    </section>
+    <section class="ip r" id="ipC">
+      <div class="ip-top"><button class="ip-back" id="backC" aria-label="뒤로"></button><span class="ip-stepn">2 / 2</span></div>
+      <h2>나무 이름표를<br>달아 주세요</h2>
+      <p class="sub-t">이름표는 나무 옆에 꽂히고, 알림톡에도 이 이름으로 가요.</p>
+      <div class="sign-big"><span class="sign-board"><em id="pvName">우리 가족</em>의<br><b id="pvVar">홍로</b>나무</span><span class="sign-post"></span></div>
+      <input class="name-in" id="nameIn" maxlength="8" placeholder="예: 우리 가족" autocomplete="off" enterkeyhint="done">
+      <div class="chips" id="chips"><button type="button">우리 가족</button><button type="button">엄마</button><button type="button">아빠</button><button type="button">나</button></div>
+      <div class="grow"></div>
+      <div class="ip-cta"><button class="btn-l green" id="goPlant">씨앗 심기</button></div>
+    </section>
+  </div>
+</div>
+</div>
+
+<section class="guide" id="guide">
+  <div class="g-in">
+    <p class="g-eyebrow">열매나무 · 사과나무 키우기 게임 샘플</p>
+    <h1 class="g-h1">사과를 사면 자라고,<br>다 키우면 <em>진짜 거창 사과</em>가 와요</h1>
+    <p class="g-lead">레퍼런스 보드에서 권해 드린 1안 ‘내 사과나무’를 열매나무 사과로 직접 만들어 본 체험용 샘플입니다. 실제 주문·결제와는 연결되어 있지 않고, 기록은 이 기기에만 남습니다.</p>
+    <div class="g-qr pc-only"><img src="img/qr_site.svg" alt="이 샘플 주소 QR"><div><b>폰으로 열어 보세요</b><span>카메라로 찍으면 바로 열립니다</span></div></div>
+
+    <h2 class="g-h2">1분 체험 순서</h2>
+    <ol class="g-steps">
+      <li><b>품종 고르고 이름표 달기</b><span>홍로·감홍·부사 중 하나를 고르고 나무 이름을 붙입니다.</span></li>
+      <li><b>물 주기 → 하루 넘기기</b><span>물은 하루 한 번입니다. 위쪽 ‘하루 넘기기’로 다음 날로 넘어갑니다.</span></li>
+      <li><b>거름 받기 → 주문한 셈 치기</b><span>사과를 한 번 사면 물 5번 몫이 한 번에 자랍니다.</span></li>
+      <li><b>빨갛게 익으면 수확하기</b><span>사과가 상자에 담기고 사과 교환권을 받습니다. 끝까지 빨리 보려면 ‘다음 단계로’를 누릅니다.</span></li>
+    </ol>
+
+    <h2 class="g-h2">쇼핑몰에 이미 있는 것과 이렇게 이어집니다</h2>
+    <div class="g-map">
+      <div class="g-row"><div class="g-k">거름 1포대<small>물 5번 몫</small></div><div class="g-v"><b>사과 주문</b> — 주문이 확정되면 자동으로 들어갑니다.</div></div>
+      <div class="g-row"><div class="g-k">물 주기<small>하루 한 번</small></div><div class="g-v"><b>회원 로그인</b> — 지금 쓰는 카카오 로그인 그대로, 버튼 하나면 끝납니다.</div></div>
+      <div class="g-row"><div class="g-k">열매가 맺히면<small>1,000원 쿠폰</small></div><div class="g-v"><b>지금 쿠폰 기능</b> — 회원가입·첫 주문 쿠폰처럼 쿠폰함으로 들어갑니다.</div></div>
+      <div class="g-row"><div class="g-k">다 키우면<small>사과 교환권</small></div><div class="g-v"><b>쿠폰함 + 배송</b> — 다음 주문에 함께 담아 보내거나, 배송비 없이 바로 보냅니다.</div></div>
+      <div class="g-row"><div class="g-k">나무 소식<small>꽃·열매·수확</small></div><div class="g-v"><b>카카오 알림톡</b> — 지금 쇼핑몰 알림은 문자로 나갑니다. 같은 발송 서비스로 알림톡도 보낼 수 있고, 카카오 채널에 문구를 등록해 승인받으면 됩니다.</div></div>
+      <div class="g-row"><div class="g-k">선물 씨앗<small>상자 속 카드</small></div><div class="g-v"><b>선물 주문</b> — 받는 분이 주문자와 다른 주문이 4건 중 1건(28%)입니다. 받은 분이 다음 손님이 됩니다.</div></div>
+    </div>
+
+    <h2 class="g-h2">알림톡은 이렇게 갑니다</h2>
+    <div class="g-talks">
+      <div class="g-talk"><p class="g-when">꽃이 필 때</p><div class="g-bubble"><b>[열매나무] 사과꽃이 피었어요</b>우리 가족의 홍로나무에 사과꽃이 피었어요. 거창 과수원 꽃 소식도 함께 보내 드려요.<span class="g-btn">내 나무 보기</span></div></div>
+      <div class="g-talk"><p class="g-when">열매가 맺힐 때</p><div class="g-bubble"><b>[열매나무] 열매가 맺혔어요</b>풋사과가 열렸어요. 1,000원 쿠폰이 쿠폰함에 들어갔습니다.<span class="g-btn">쿠폰 보기</span></div></div>
+      <div class="g-talk"><p class="g-when">다 키웠을 때</p><div class="g-bubble"><b>[열매나무] 수확 완료!</b>우리 가족의 홍로나무에서 사과를 땄어요. 홍로 한입사과 교환권이 도착했습니다.<span class="g-btn">교환권 보기</span></div></div>
+      <div class="g-talk"><p class="g-when">교환권이 끝나기 2주 전</p><div class="g-bubble"><b>[열매나무] 교환권 안내</b>사과 교환권이 14일 뒤에 끝나요. 다음 주문에 함께 담거나 바로 받아 보세요.<span class="g-btn">교환권 쓰기</span></div></div>
+    </div>
+
+    <h2 class="g-h2">이 샘플에서 지킨 다섯 가지</h2>
+    <ul class="g-keep">
+      <li><b>끝까지 정직한 진도</b><span>남은 물 횟수를 마지막까지 숫자로 보여 줍니다. 끝에 가서 늦추지 않습니다.</span></li>
+      <li><b>공짜면 진짜 공짜</b><span>교환권 사과는 배송비 없이 보내고, 기간은 넉넉히(샘플은 90일) 둡니다.</span></li>
+      <li><b>뽑기 대신 약속</b><span>같은 만큼 키우면 누구나 같은 사과를 받습니다.</span></li>
+      <li><b>놓친 날은 봐주기</b><span>며칠 못 와도 나무는 시들지 않고 진도도 그대로입니다.</span></li>
+      <li><b>앱 설치 없이</b><span>지금처럼 폰 웹에서 바로 됩니다. 손님 대부분이 앱이 아니라 폰 웹으로 옵니다.</span></li>
+    </ul>
+
+    <h2 class="g-h2">대표님이 정하실 세 가지</h2>
+    <div class="g-decide">
+      <div class="g-card"><p class="g-tag">보상</p><b>다 키우면 무엇을 드릴까</b><span>샘플은 홍로 한입사과 1박스(2.8kg), 감홍·부사는 못난이 3kg입니다. 쿠폰이나 적립금으로 바꿔도 됩니다.</span></div>
+      <div class="g-card"><p class="g-tag">속도</p><b>수확까지 얼마나 걸릴까</b><span>샘플은 물만 주면 30일, 일주일에 한 번 사면 보름쯤입니다. 봄에 심어 가을에 거두는 1년 한 그루도 됩니다.</span></div>
+      <div class="g-card"><p class="g-tag">과수원 소식</p><b>꽃 필 때·딸 때 사진</b><span>과수원 사진 몇 장이면 나무 소식에 진짜 거창 과수원이 들어가 ‘내 나무’ 느낌이 삽니다.</span></div>
+    </div>
+    <p class="g-note">샘플의 과수원·나무 그림은 이 샘플을 위해 새로 그렸고, 사과 사진은 열매나무 쇼핑몰 상품 사진입니다.</p>
+
+    <div class="g-foot">
+      <a href="https://honest-family.github.io/eapple-game-references/" target="_blank" rel="noopener">레퍼런스 보드 다시 보기 →</a>
+      <p>체험용 샘플 · 실제 주문·결제·쿠폰과 연결되어 있지 않습니다 · 가격은 2026년 11월 5일 쇼핑몰 기준 · 어니스트패밀리</p>
+      <a class="g-top" href="#top">↑ 게임으로 돌아가기</a>
+    </div>
+  </div>
+</section>
+</div>
+<script src="app.js?v=1"></script>
+</body>
+</html>
