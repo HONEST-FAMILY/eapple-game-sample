@@ -3,7 +3,7 @@
 
 const qs = new URLSearchParams(location.search);
 const GIFT = qs.has('gift');
-const KEY = GIFT ? 'eapple-tree-gift-v1' : 'eapple-tree-v1';
+const KEY = GIFT ? 'eapple-tree-gift-v2' : 'eapple-tree-v2';
 const MAX = 30, ORDER = 5, FRIEND_MAX = 3, GIFT_PTS = 3;
 
 const STAGES = [
@@ -14,6 +14,7 @@ const STAGES = [
   { n: '열매', at: 19, rw: '쿠폰' },
   { n: '수확', at: 30, rw: '사과 상자' },
 ];
+const START = STAGES[2].at;
 
 const VAR = {
   hongro: { n: '홍로', m: 9, brix: 12, img: 'img/hongro.jpg', desc: '9월 · 추석 햇사과', rw: '홍로 한입사과 1박스', rwShort: '한입사과 1박스', rwImg: 'img/shop_hanip.jpg',
@@ -36,7 +37,8 @@ const MONTH = { 1: '가지치기', 2: '가지치기', 3: '새순 트는 때', 4:
 const GAP = { 2: '이틀', 3: '사흘', 4: '나흘', 5: '닷새' };
 
 const CANOPY = [[150, 160, 58], [100, 178, 42], [200, 178, 42], [120, 128, 38], [182, 128, 38], [150, 106, 34], [76, 200, 28], [224, 200, 28], [150, 206, 42]];
-const SMALL = [[150, 214, 30], [125, 228, 22], [175, 226, 22], [137, 197, 19], [165, 195, 19], [150, 234, 20]];
+const SMALL = [[150, 198, 36], [122, 210, 26], [178, 210, 26], [134, 176, 24], [166, 174, 24], [150, 160, 22], [100, 224, 18], [200, 222, 18], [114, 186, 19], [186, 188, 19], [150, 142, 18]];
+const SMALL_BASE = 6;
 const APPLES = [[112, 170], [140, 140], [172, 150], [198, 176], [150, 192], [124, 204], [180, 204], [96, 196], [208, 144], [160, 116], [128, 112], [220, 200], [82, 172], [150, 164]];
 const FLOWERS = [[110, 160], [132, 132], [168, 140], [196, 166], [150, 184], [120, 196], [184, 198], [92, 190], [206, 134], [158, 108], [126, 106], [222, 192], [80, 168], [150, 150], [102, 136], [196, 118], [142, 206], [170, 176], [116, 180], [230, 172], [70, 192], [176, 96], [134, 90], [188, 214]];
 const EDGE = [[54, 204, 200], [64, 176, 220], [86, 140, 235], [100, 104, 250], [128, 84, 262], [150, 70, 270], [174, 82, 280], [204, 102, 292], [220, 134, 305], [240, 168, 320], [248, 200, 340], [112, 232, 160], [190, 236, 20]];
@@ -60,6 +62,7 @@ const ICON = {
   tick: '<svg viewBox="0 0 12 12" fill="none"><path d="m2.5 6.2 2.3 2.3 4.7-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
   flower: '<svg viewBox="0 0 24 24"><g fill="#fff" stroke="#F4B6C9" stroke-width="1"><ellipse cx="12" cy="6.8" rx="3.6" ry="4.6"/><ellipse cx="12" cy="6.8" rx="3.6" ry="4.6" transform="rotate(72 12 12)"/><ellipse cx="12" cy="6.8" rx="3.6" ry="4.6" transform="rotate(144 12 12)"/><ellipse cx="12" cy="6.8" rx="3.6" ry="4.6" transform="rotate(216 12 12)"/><ellipse cx="12" cy="6.8" rx="3.6" ry="4.6" transform="rotate(288 12 12)"/></g><circle cx="12" cy="12" r="2.6" fill="#F7C548"/></svg>',
   coupon: '<svg viewBox="0 0 24 24"><path d="M2 7a1.5 1.5 0 0 1 1.5-1.5h17A1.5 1.5 0 0 1 22 7v3.2a1.8 1.8 0 0 0 0 3.6V17a1.5 1.5 0 0 1-1.5 1.5h-17A1.5 1.5 0 0 1 2 17v-3.2a1.8 1.8 0 0 0 0-3.6z" fill="#FF990D"/><path d="M16.5 6.5v11" stroke="#fff" stroke-width="1.3" stroke-dasharray="1.8 1.8"/><text x="10" y="14.2" font-size="6.2" font-weight="800" fill="#fff" text-anchor="middle">1천</text></svg>',
+  pen: '<svg viewBox="0 0 16 16" fill="none"><path d="M3 13l.6-2.8L10.4 3.4a1.4 1.4 0 0 1 2 0l.2.2a1.4 1.4 0 0 1 0 2L5.8 12.4z" fill="#B07D4A"/><path d="M3 13l.6-2.8 2.2 2.2z" fill="#7A5230"/></svg>',
   rain: '<svg viewBox="0 0 24 24"><path d="M7 14a4 4 0 0 1-.4-8 5.5 5.5 0 0 1 10.6 1.6A3.3 3.3 0 0 1 17 14z" fill="#A9C7E2"/><path d="M8 17l-1 2.5M12 17l-1 2.5M16 17l-1 2.5" stroke="#5BA6DE" stroke-width="1.8" stroke-linecap="round"/></svg>',
 };
 
@@ -81,9 +84,10 @@ const SEED_CARD_ART = '<svg viewBox="0 0 120 120"><circle cx="60" cy="62" r="50"
 function treeSVG(sfx, cls) {
   const u = (n) => n + sfx;
   const f = (n) => n.toFixed(1);
-  const back = (arr) => arr.map(([x, y, r]) => `<circle cx="${x + 3}" cy="${y + 5}" r="${r}"/>`).join('');
-  const mid = (arr) => arr.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r - 3}" fill="url(#${u('lf')})"/>`).join('');
-  const hi = (arr) => arr.map(([x, y, r]) => `<circle cx="${f(x - r * 0.34)}" cy="${f(y - r * 0.38)}" r="${f(r * 0.34)}"/>`).join('');
+  const lv = (k) => (k >= SMALL_BASE ? ` class="lv off" data-k="${k}"` : '');
+  const back = (arr, c) => arr.map(([x, y, r], k) => `<circle${c ? c(k) : ''} cx="${x + 3}" cy="${y + 5}" r="${r}"/>`).join('');
+  const mid = (arr, c) => arr.map(([x, y, r], k) => `<circle${c ? c(k) : ''} cx="${x}" cy="${y}" r="${r - 3}" fill="url(#${u('lf')})"/>`).join('');
+  const hi = (arr, c) => arr.map(([x, y, r], k) => `<circle${c ? c(k) : ''} cx="${f(x - r * 0.34)}" cy="${f(y - r * 0.38)}" r="${f(r * 0.34)}"/>`).join('');
   const edge = EDGE.map(([x, y, a]) => `<ellipse cx="${x}" cy="${y}" rx="9" ry="5" transform="rotate(${a} ${x} ${y})"/>`).join('');
   const fl = FLOWERS.map(([x, y], i) => { const s = 13 + ((i * 7) % 9); return `<use href="#${u('fl')}" x="${f(x - s / 2)}" y="${f(y - s / 2)}" width="${s}" height="${s}" style="--i:${i}"/>`; }).join('');
   const ap = APPLES.map(([x, y], i) => `<g transform="translate(${x} ${y})"><g class="aps" style="--i:${i}"><use href="#${u('ap')}" x="-12" y="-14" width="24" height="26"/></g></g>`).join('');
@@ -119,9 +123,9 @@ function treeSVG(sfx, cls) {
 </g>
 </g>
 <g class="stg g-sap">
-<path d="M147 303C148 284 149 262 148 236L153 236C152 262 152 284 154 303Z" fill="url(#${u('tr')})"/>
-<path d="M149.5 262C141 254 133 250 124 249M150.5 254C159 246 167 242 176 241" stroke="#7A4E2D" stroke-width="3" fill="none" stroke-linecap="round"/>
-<g class="sway"><g style="fill:var(--leaf-lo)">${back(SMALL)}</g><g>${mid(SMALL)}</g><g fill="#fff" opacity=".1">${hi(SMALL)}</g></g>
+<path d="M144.5 303C146.5 285 147.4 262 147 236L153 236C152.6 262 153.5 285 155.5 303Z" fill="url(#${u('tr')})"/>
+<path d="M148.6 258C142 251 135 245 126 240M151.4 250C158 244 165 239 174 235" stroke="#7A4E2D" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+<g class="sway"><g style="fill:var(--leaf-lo)">${back(SMALL, lv)}</g><g>${mid(SMALL, lv)}</g><g fill="#fff" opacity=".1">${hi(SMALL, lv)}</g></g>
 </g>
 <g class="stg g-sprout"><g class="sway">
 <path d="M150 299C150 287 149 277 151 265" stroke="#5FAE4E" stroke-width="4" fill="none" stroke-linecap="round"/>
@@ -147,9 +151,9 @@ const $ = (id) => document.getElementById(id);
 const E = {};
 ['app', 'scene', 'treeWrap', 'treeBounce', 'treeIn', 'fx', 'sign', 'signName', 'signVar', 'crate', 'toast', 'pBadge', 'pStage', 'pCount', 'pSide', 'steps', 'stepsFill', 'reward', 'rewardImg', 'rewardName',
   'btnMain', 'mainIco', 'mainT', 'mainS', 'btnShop', 'btnFriend', 'btnGift', 'noti', 'notiMsg', 'notiIc', 'backdrop', 'sheet', 'sheetT', 'sheetP', 'sheetB', 'sheetX', 'modal', 'coach', 'confetti',
-  'intro', 'ipA', 'ipB', 'ipC', 'goB', 'goC', 'goPlant', 'backB', 'backC', 'vars', 'nameIn', 'chips', 'pvName', 'pvVar', 'heroDisc', 'giftRibbon', 'demoDay', 'dDay', 'dSkip', 'dReset', 'season', 'btnSound'].forEach((k) => { E[k] = $(k); });
+  'intro', 'ipB', 'ipC', 'goC', 'goPlant', 'backB', 'backC', 'vars', 'nameIn', 'chips', 'pvName', 'pvVar', 'demoDay', 'dDay', 'dSkip', 'dReset', 'season', 'btnSound'].forEach((k) => { E[k] = $(k); });
 
-const def = () => ({ v: 1, started: false, name: '', variety: 'hongro', pts: 0, day: 1, lastWater: 0, friendDay: 0, friendCnt: 0, orders: 0, waterDays: 0, trees: 0, coupons: [], forgave: -1, coach: 0, sound: true, given: {}, phase: 'grow' });
+const def = () => ({ v: 1, name: '', variety: 'hongro', pts: START, day: 1, lastWater: 0, friendDay: 0, friendCnt: 0, orders: 0, waterDays: 0, trees: 0, coupons: [], forgave: -1, coach: 0, hello: 0, sound: true, given: {}, phase: 'grow' });
 let S = load();
 function load() {
   try { const o = JSON.parse(localStorage.getItem(KEY)); if (o && o.v === 1) return Object.assign(def(), o); } catch (e) {}
@@ -174,8 +178,13 @@ function appleColors(t, red) {
   const [A, B, w] = t < 0.5 ? [G, Y, t / 0.5] : [Y, red, (t - 0.5) / 0.5];
   return { hi: mix(A.hi, B.hi, w), mid: mix(A.mid, B.mid, w), lo: mix(A.lo, B.lo, w) };
 }
+function setLeaves(svg, idx, p) {
+  const n = idx === 2 ? SMALL_BASE + Math.round(frac(p) * (SMALL.length - SMALL_BASE + 1)) : SMALL.length;
+  svg.querySelectorAll('.lv').forEach((c) => c.classList.toggle('off', +c.dataset.k >= n));
+}
 function paintTree(svg, idx, p, variety) {
   for (let k = 0; k < 6; k++) svg.classList.toggle('st-' + k, k === idx);
+  setLeaves(svg, idx, p);
   const t = idx >= 5 ? 1 : idx === 4 ? frac(p) : 0;
   const c = appleColors(t, (VAR[variety] || VAR.hongro).red);
   svg.style.setProperty('--ap-hi', c.hi);
@@ -236,7 +245,7 @@ function buildOrchard() {
   document.getElementById('orchRows').innerHTML = h;
 }
 
-let treeSvg, heroSvg, modalTreeHTML = '';
+let treeSvg;
 const CRATE_SLOTS = [[20, 40], [37, 41], [54, 40], [71, 41], [88, 40], [104, 41], [28, 32], [45, 31], [62, 32], [79, 31], [96, 32], [38, 23], [60, 22], [82, 23]];
 function crateSVG(id, full) {
   const apple = APPLE_FLY.replace(/^<svg[^>]*>/, '').replace('</svg>', '');
@@ -252,12 +261,9 @@ ${CRATE_SLOTS.map(([x, y], i) => `<g transform="translate(${x} ${y})"><g class="
 function mountTrees() {
   E.treeIn.innerHTML = treeSVG('_t', '');
   treeSvg = E.treeIn.querySelector('svg');
-  E.heroDisc.innerHTML = treeSVG('_h', '');
-  heroSvg = E.heroDisc.querySelector('svg');
-  paintTree(heroSvg, 5, MAX, 'hongro');
   E.crate.innerHTML = crateSVG('cap', false);
   const path = document.getElementById('pathL');
-  if (path) path.innerHTML = STAGES.map((st, k) => `<li><span>${STEP_ICON[k]}</span>${st.n}</li>`).join('');
+  if (path) path.innerHTML = STAGES.map((st, k) => `<li class="${k < 2 ? 'pre' : k === 2 ? 'start' : ''}"><span>${STEP_ICON[k]}</span>${st.n}</li>`).join('');
 }
 
 function renderSteps(idx, p) {
@@ -266,18 +272,20 @@ function renderSteps(idx, p) {
   E.stepsFill.style.setProperty('--p', (pos / 5).toFixed(4));
 }
 
+let entering = false;
 function render() {
   const idx = stageIdx(S.pts), v = V(), done = S.phase === 'done';
-  paintTree(treeSvg, idx, S.pts, S.variety);
+  if (entering) setLeaves(treeSvg, idx, S.pts);
+  else paintTree(treeSvg, idx, S.pts, S.variety);
   treeSvg.querySelectorAll('.aps').forEach((a) => a.classList.toggle('gone', done));
-  const g = idx >= 5 ? 1 : idx >= 3 ? 0.93 + 0.07 * frac(S.pts) : 0.88 + 0.12 * frac(S.pts);
+  const g = idx >= 5 ? 1 : idx >= 3 ? 0.93 + 0.07 * frac(S.pts) : idx === 2 ? 0.9 + 0.1 * frac(S.pts) : 0.88 + 0.12 * frac(S.pts);
   E.treeIn.style.setProperty('--g', g.toFixed(3));
   E.scene.classList.toggle('k-bloom', idx === 3);
   E.scene.classList.toggle('k-fruit', idx === 4);
   E.scene.classList.toggle('k-harvest', idx === 5);
   E.signName.textContent = S.name || '우리 가족';
   E.signVar.textContent = v.n;
-  E.sign.classList.toggle('hide', !S.started);
+  E.sign.classList.toggle('hide', entering);
   E.crate.classList.toggle('on', idx === 5);
   if (!done) E.crate.querySelectorAll('.ca').forEach((c) => c.classList.remove('in'));
 
@@ -413,7 +421,7 @@ function fxEl(cls, x, y, html) {
   E.fx.appendChild(d);
   return d;
 }
-function canopyTop(idx) { return [0.86, 0.76, 0.62, 0.2, 0.2, 0.2][idx]; }
+function canopyTop(idx) { return [0.86, 0.76, 0.44, 0.2, 0.2, 0.2][idx]; }
 
 function floatText(text, big) {
   const { w, h } = wrapRect(), idx = stageIdx(S.pts);
@@ -424,9 +432,9 @@ function floatText(text, big) {
 }
 function sparkle(n) {
   const { w, h } = wrapRect(), idx = stageIdx(S.pts);
-  const cy = h * (idx >= 3 ? 0.45 : canopyTop(idx) + 0.06), cx = w / 2;
+  const cy = h * (idx >= 3 ? 0.45 : idx === 2 ? 0.6 : canopyTop(idx) + 0.06), cx = w / 2;
   for (let i = 0; i < n; i++) {
-    const a = (Math.PI * 2 * i) / n + Math.random() * 0.4, dist = w * (idx >= 3 ? 0.3 : 0.16) + Math.random() * 24;
+    const a = (Math.PI * 2 * i) / n + Math.random() * 0.4, dist = w * (idx >= 3 ? 0.3 : idx === 2 ? 0.22 : 0.16) + Math.random() * 24;
     const s = fxEl('spark', cx - 6, cy - 6, '');
     const sc = 0.6 + Math.random() * 0.8;
     s.animate([{ transform: 'translate(0,0) scale(0) rotate(0)', opacity: 1 }, { transform: `translate(${Math.cos(a) * dist}px,${Math.sin(a) * dist}px) scale(${sc}) rotate(90deg)`, opacity: 1, offset: 0.6 }, { transform: `translate(${Math.cos(a) * dist * 1.15}px,${Math.sin(a) * dist * 1.15}px) scale(0) rotate(160deg)`, opacity: 0 }], { duration: 900 + Math.random() * 300, easing: 'cubic-bezier(.2,.8,.3,1)' }).onfinish = () => s.remove();
@@ -455,7 +463,7 @@ function pour(kind, side) {
     const dx = tx - ox, dy = ty - oy;
     const relX = ox + dx * Math.cos(a) - dy * Math.sin(a), relY = oy + dx * Math.sin(a) + dy * Math.cos(a);
     const aimX = w * 0.5 + (side === 'l' ? -10 : 10);
-    const aimY = h * [0.7, 0.62, 0.46, 0.1, 0.1, 0.1][idx];
+    const aimY = h * [0.7, 0.62, 0.34, 0.1, 0.1, 0.1][idx];
     const tool = fxEl('tool', aimX - relX, aimY - relY, isSack ? SACK_BIG : ICON.canColor);
     tool.style.width = tw + 'px';
     tool.style.height = th + 'px';
@@ -498,7 +506,7 @@ function giftPop() {
 
 function friendTag(name) {
   const { w, h } = wrapRect();
-  const t = fxEl('friend-tag', w * 0.04, h * [0.8, 0.74, 0.58, 0.26, 0.26, 0.26][stageIdx(S.pts)], '');
+  const t = fxEl('friend-tag', w * 0.04, h * [0.8, 0.74, 0.5, 0.26, 0.26, 0.26][stageIdx(S.pts)], '');
   t.textContent = `${name}${josa(name, '이', '가')} 물을 줬어요`;
   t.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'none', offset: 0.15 }, { opacity: 1, offset: 0.85 }, { opacity: 0 }], { duration: 1900 }).onfinish = () => t.remove();
 }
@@ -559,7 +567,7 @@ function stageUp(idx, src, before) {
 async function onMain() {
   if (busy) return;
   hideCoach();
-  if (S.phase === 'done') { sfx.tap(); return openIntro('B', true); }
+  if (S.phase === 'done') { sfx.tap(); return openIntro('B', 'replant'); }
   const idx = stageIdx(S.pts);
   if (idx === 5) return harvest();
   if (S.lastWater === S.day) { sfx.tap(); toast('오늘 물은 줬어요 · 위 ‘하루 넘기기’로 내일로 가 보세요'); coach('dDay', '체험용 버튼이에요. 눌러서 내일로 넘어가 보세요', 'below'); return; }
@@ -604,15 +612,18 @@ async function skipStage() {
 
 function askReset() {
   if (busy) return;
-  openModal(`<h3 style="margin-top:6px">처음부터 다시 할까요?</h3><p>이 기기에 남은 체험 기록을 지우고 씨앗 심기부터 다시 시작해요.</p><div class="btn-row"><button class="btn-l line" id="mNo">그대로 둘게요</button><button class="btn-l dark" id="mYes">처음부터</button></div>`, (m) => {
+  openModal(`<h3 style="margin-top:6px">처음부터 다시 할까요?</h3><p>이 기기에 남은 체험 기록을 지우고 어린 사과나무부터 다시 시작해요.</p><div class="btn-row"><button class="btn-l line" id="mNo">그대로 둘게요</button><button class="btn-l dark" id="mYes">처음부터</button></div>`, (m) => {
     m.querySelector('#mNo').onclick = () => { sfx.tap(); closeModal(); };
-    m.querySelector('#mYes').onclick = () => {
+    m.querySelector('#mYes').onclick = async () => {
       const snd = S.sound;
       S = def(); S.sound = snd; save();
-      closeModal(); closeSheet();
+      closeModal(); closeSheet(); hideNoti();
       E.fx.innerHTML = '';
-      render();
-      openIntro('A', false);
+      E.btnMain.classList.remove('nudge');
+      await sprout(450);
+      sfx.pop();
+      toast('처음으로 돌아왔어요 · 물을 줘 볼까요?');
+      welcome();
     };
   });
 }
@@ -744,21 +755,22 @@ async function harvest() {
   });
 }
 
-let introReplant = false;
+let introMode = 'replant';
 function showPage(id) {
-  ['ipA', 'ipB', 'ipC'].forEach((k, i) => {
-    const order = ['A', 'B', 'C'].indexOf(id);
+  ['ipB', 'ipC'].forEach((k, i) => {
+    const order = ['B', 'C'].indexOf(id);
     E[k].classList.toggle('r', i > order);
     E[k].classList.toggle('l', i < order);
   });
 }
-function openIntro(page, replant) {
-  introReplant = !!replant;
+function openIntro(page, mode) {
+  introMode = mode;
   closeSheet(); closeModal(); hideCoach();
   E.intro.classList.remove('off');
   renderVars();
   E.nameIn.value = S.name || '';
   updatePreview();
+  E.goPlant.textContent = mode === 'edit' ? '이대로 바꾸기' : '나무 심기';
   showPage(page);
 }
 function closeIntro() { E.intro.classList.add('off'); }
@@ -775,32 +787,57 @@ function updatePreview() {
   E.pvVar.textContent = VAR[pickVar].n;
 }
 
-async function plant() {
-  const name = (E.nameIn.value.replace(/[<>&"'`]/g, '').trim() || '우리 가족').slice(0, 8);
-  const first = !S.started;
-  S.name = name; S.variety = pickVar; S.started = true;
-  S.pts = 0; S.phase = 'grow'; S.lastWater = 0; S.forgave = -1;
+const typedName = () => (E.nameIn.value.replace(/[<>&"'`]/g, '').trim() || '우리 가족').slice(0, 8);
+
+function sprout(delay) {
+  entering = true;
+  for (let k = 0; k < 6; k++) treeSvg.classList.remove('st-' + k);
+  render();
+  return new Promise((res) => setTimeout(() => {
+    entering = false;
+    render();
+    sparkle(10);
+    res();
+  }, delay || 400));
+}
+
+function nudgeWater(delay) {
+  E.btnMain.classList.add('nudge');
+  setTimeout(() => { if (S.lastWater === 0 && S.phase === 'grow' && !busy && !modalOpen && !sheetOpen && E.intro.classList.contains('off')) coach('btnMain', '하루 한 번, 눌러서 물을 줘요', 'above'); }, delay || 300);
+}
+
+function welcome() {
+  if (GIFT && !S.hello) {
+    S.hello = 1; save();
+    setTimeout(() => openModal(`${modalTree(stageIdx(S.pts))}<p class="m-kicker" style="color:#D9603F">선물 상자 속 씨앗 카드</p><h3>내 사과나무가 생겼어요!</h3><p>씨앗 카드로 어린 사과나무를 심어 드렸어요. 보내신 분 나무에도 물${NB}${GIFT_PTS}번이 갔어요.</p><button class="btn-l" id="mOk">물 주러 가기</button>`, (m) => {
+      paintModalTree(stageIdx(S.pts));
+      m.querySelector('#mOk').onclick = () => { sfx.tap(); closeModal(); nudgeWater(500); };
+    }), 500);
+    return;
+  }
+  if (S.phase === 'grow' && S.lastWater === 0 && S.waterDays === 0) nudgeWater(1100);
+}
+
+async function replant() {
+  S.name = typedName(); S.variety = pickVar;
+  S.pts = START; S.phase = 'grow'; S.lastWater = 0; S.forgave = -1;
   save();
   sfx.tap();
   closeIntro();
   E.fx.innerHTML = '';
-  render();
+  await sprout(500);
+  sfx.pop(); buzz(20);
+  toast(`${S.trees + 1}번째 나무를 심었어요!`, 2600);
+  nudgeWater(1400);
+}
+
+function applyEdit() {
+  S.name = typedName(); S.variety = pickVar;
+  save();
+  sfx.tap();
+  closeIntro();
   E.sign.classList.add('hide');
-  await wait(450);
-  const { w, h } = wrapRect();
-  const seed = fxEl('tool', w / 2 - 9, -20, '<svg viewBox="0 0 20 16"><ellipse cx="10" cy="8" rx="8" ry="6" fill="#8C5A35"/><ellipse cx="7.5" cy="6" rx="2.6" ry="1.5" fill="#fff" opacity=".4"/></svg>');
-  seed.style.width = '18px'; seed.style.height = '14px';
-  seed.animate([{ transform: 'translateY(0)' }, { transform: `translateY(${h * 0.9 + 4}px)`, offset: 0.7 }, { transform: `translateY(${h * 0.9 - 10}px)`, offset: 0.85 }, { transform: `translateY(${h * 0.9 + 6}px)` }], { duration: 900, easing: 'ease-in' }).onfinish = () => {
-    seed.remove();
-    sfx.pop(); buzz(20);
-    sparkle(10);
-    E.sign.classList.remove('hide');
-  };
-  await wait(1100);
-  if (GIFT && first) { toast('선물 씨앗을 심었어요! 보내신 분께도 물 3번이 갔어요', 2800); }
-  else toast(first ? '씨앗을 심었어요! 첫 물을 줘 볼까요?' : `${S.trees + 1}번째 나무를 심었어요!`, 2600);
-  E.btnMain.classList.add('nudge');
-  if (first && S.coach === 0) setTimeout(() => { if (S.lastWater === 0 && !busy && !modalOpen && !sheetOpen) coach('btnMain', '하루 한 번, 눌러서 물을 줘요', 'above'); }, 2700);
+  setTimeout(() => { render(); sfx.pop(); toast(`${owner()}로 바꿨어요`); }, 450);
 }
 
 function confetti(n) {
@@ -836,16 +873,12 @@ function init() {
   $('icShop').innerHTML = ICON.sack;
   $('icFriend').innerHTML = ICON.friend;
   $('icGift').innerHTML = ICON.gift;
-  $('icGift2').innerHTML = ICON.gift;
-  $('hw1').innerHTML = ICON.sack;
-  $('hw2').innerHTML = ICON.can.replace(/currentColor/g, '#4A9AD3');
-  $('hw3').innerHTML = ICON.box;
+  $('signEdit').innerHTML = ICON.pen;
   E.notiIc.innerHTML = ICON.talk;
   E.sheetX.innerHTML = ICON.x;
   E.backB.innerHTML = ICON.back;
   E.backC.innerHTML = ICON.back;
   setSoundIcon();
-  if (GIFT) E.giftRibbon.hidden = false;
 
   E.btnMain.onclick = onMain;
   E.btnShop.onclick = openShop;
@@ -867,18 +900,18 @@ function init() {
     if (y > 0 && y < E.app.offsetHeight) window.scrollTo({ top: 0, behavior: 'smooth' });
   }, true);
   E.btnSound.onclick = () => { S.sound = !S.sound; save(); setSoundIcon(); if (S.sound) sfx.tap(); };
-  E.goB.onclick = () => { sfx.tap(); showPage('B'); };
-  E.backB.onclick = () => { sfx.tap(); if (introReplant) closeIntro(); else showPage('A'); };
+  const editSign = () => { if (busy) return; sfx.tap(); openIntro('B', 'edit'); };
+  E.sign.onclick = editSign;
+  E.sign.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); editSign(); } });
+  E.backB.onclick = () => { sfx.tap(); closeIntro(); };
   E.goC.onclick = () => { sfx.tap(); updatePreview(); showPage('C'); };
   E.backC.onclick = () => { sfx.tap(); showPage('B'); };
-  E.goPlant.onclick = plant;
+  E.goPlant.onclick = () => (introMode === 'edit' ? applyEdit() : replant());
   E.nameIn.addEventListener('input', updatePreview);
   E.nameIn.addEventListener('keydown', (e) => { if (e.key === 'Enter') E.nameIn.blur(); });
   E.chips.querySelectorAll('button').forEach((b) => { b.onclick = () => { sfx.tap(); E.nameIn.value = b.textContent; updatePreview(); }; });
 
-  render();
-  if (!S.started) openIntro('A', false);
-  else closeIntro();
+  sprout(450).then(welcome);
 }
 
 init();

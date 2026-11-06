@@ -9,12 +9,12 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="열매나무 ‘내 사과나무’ 게임 샘플">
 <meta property="og:description" content="사과를 사면 자라고, 다 키우면 진짜 거창 사과가 와요. 폰에서 눌러 보는 체험용 샘플입니다.">
-<meta property="og:image" content="https://honest-family.github.io/eapple-game-sample/img/og.jpg">
+<meta property="og:image" content="https://honest-family.github.io/eapple-game-sample/img/og.jpg?v=2">
 <meta name="theme-color" content="#FFF9F0">
 <link rel="icon" href="img/favicon.png">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="style.css?v=2">
+<link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
 <div class="page" id="top">
@@ -70,7 +70,7 @@
       <div class="tree-bounce" id="treeBounce"><div class="tree-in" id="treeIn"></div></div>
       <div class="fx" id="fx"></div>
     </div>
-    <div class="sign hide" id="sign"><span class="sign-board"><em id="signName">우리 가족</em>의<br><b id="signVar">홍로</b>나무</span><span class="sign-post"></span></div>
+    <div class="sign hide" id="sign" role="button" tabindex="0" aria-label="이름표 바꾸기"><span class="sign-board"><em id="signName">우리 가족</em>의<br><b id="signVar">홍로</b>나무</span><span class="sign-post"></span><span class="sign-edit" id="signEdit" aria-hidden="true"></span></div>
     <div class="crate" id="crate"></div>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
   </main>
@@ -110,37 +110,25 @@
   <div class="coach" id="coach"></div>
   <canvas class="confetti" id="confetti"></canvas>
 
-  <div class="intro" id="intro">
-    <section class="ip" id="ipA">
-      <div class="ip-top"><img class="logo" src="img/logo.png" alt="열매나무" width="88" height="22"><span class="tag">게임 샘플</span></div>
-      <div class="gift-ribbon" id="giftRibbon" hidden><i id="icGift2"></i><span>선물 상자 속 씨앗 카드로 오셨네요! 씨앗을 심으면 보내신 분께도 물이 가요.</span></div>
-      <div class="hero"><div class="disc" id="heroDisc"></div><div class="ph"><img src="img/hongro.jpg" alt="열매나무 홍로 사과"></div><span class="ph-l">열매나무 홍로</span></div>
-      <h1>거창 사과를 사면<br><em>내 사과나무</em>가 자라요</h1>
-      <ul class="how">
-        <li><i id="hw1"></i><span><b>사과를 사면 거름</b> — 한 번에 쑥 자라요</span></li>
-        <li><i id="hw2"></i><span><b>하루 한 번 물 주기</b> — 3초면 끝나요</span></li>
-        <li><i id="hw3"></i><span><b>다 키우면 진짜 사과</b> — 거창 사과 한 상자</span></li>
-      </ul>
-      <div class="ip-cta"><button class="btn-l" id="goB">내 나무 심으러 가기</button><p class="fine">체험용 샘플 · 실제 주문·결제와 연결되어 있지 않아요</p></div>
-    </section>
+  <div class="intro off" id="intro">
     <section class="ip r" id="ipB">
-      <div class="ip-top"><button class="ip-back" id="backB" aria-label="뒤로"></button><span class="ip-stepn">1 / 2</span></div>
+      <div class="ip-top"><button class="ip-back" id="backB" aria-label="뒤로"></button><span class="ip-stepn">품종 · 1 / 2</span></div>
       <h2>어떤 사과나무를<br>키울까요?</h2>
       <p class="sub-t">다 키우면 고른 품종의 거창 사과로 드려요.</p>
       <div class="vars" id="vars"></div>
-      <div class="path"><p class="path-t">이렇게 자라요</p><ol class="path-l" id="pathL"></ol><p class="path-s">물만 주면 30일 · 사과를 사면 더 빨리</p></div>
+      <div class="path"><p class="path-t">이렇게 자라요</p><ol class="path-l" id="pathL"></ol><p class="path-s">씨앗·새싹은 건너뛰고 어린 나무로 심어 드려요<br>물만 주면 24일 · 사과를 사면 더 빨리</p></div>
       <div class="grow"></div>
       <div class="ip-cta"><button class="btn-l" id="goC">이 나무로 할게요</button></div>
     </section>
     <section class="ip r" id="ipC">
-      <div class="ip-top"><button class="ip-back" id="backC" aria-label="뒤로"></button><span class="ip-stepn">2 / 2</span></div>
+      <div class="ip-top"><button class="ip-back" id="backC" aria-label="뒤로"></button><span class="ip-stepn">이름표 · 2 / 2</span></div>
       <h2>나무 이름표를<br>달아 주세요</h2>
       <p class="sub-t">이름표는 나무 옆에 꽂히고, 알림톡에도 이 이름으로 가요.</p>
       <div class="sign-big"><span class="sign-board"><em id="pvName">우리 가족</em>의<br><b id="pvVar">홍로</b>나무</span><span class="sign-post"></span></div>
       <input class="name-in" id="nameIn" maxlength="8" placeholder="예: 우리 가족" autocomplete="off" enterkeyhint="done">
       <div class="chips" id="chips"><button type="button">우리 가족</button><button type="button">엄마</button><button type="button">아빠</button><button type="button">나</button></div>
       <div class="grow"></div>
-      <div class="ip-cta"><button class="btn-l green" id="goPlant">씨앗 심기</button></div>
+      <div class="ip-cta"><button class="btn-l green" id="goPlant">나무 심기</button></div>
     </section>
   </div>
 </div>
@@ -155,7 +143,7 @@
 
     <h2 class="g-h2">1분 체험 순서</h2>
     <ol class="g-steps">
-      <li><b>품종 고르고 이름표 달기</b><span>홍로·감홍·부사 중 하나를 고르고 나무 이름을 붙입니다.</span></li>
+      <li><b>열면 바로 내 사과나무</b><span>빈 화면 대신 어린 사과나무가 심어진 채로 시작해서, 처음 온 분도 바로 물을 줄 수 있습니다. 나무 옆 이름표를 누르면 품종(홍로·감홍·부사)과 이름을 바꿉니다.</span></li>
       <li><b>물 주기 → 하루 넘기기</b><span>물은 하루 한 번입니다. 위쪽 ‘하루 넘기기’로 다음 날로 넘어갑니다.</span></li>
       <li><b>거름 받기 → 주문한 셈 치기</b><span>사과를 한 번 사면 물 5번 몫이 한 번에 자랍니다.</span></li>
       <li><b>빨갛게 익으면 수확하기</b><span>사과가 상자에 담기고 사과 교환권을 받습니다. 끝까지 빨리 보려면 ‘다음 단계로’를 누릅니다.</span></li>
@@ -191,7 +179,7 @@
     <h2 class="g-h2">대표님이 정하실 세 가지</h2>
     <div class="g-decide">
       <div class="g-card"><p class="g-tag">보상</p><b>다 키우면 무엇을 드릴까</b><span>샘플은 홍로 한입사과 1박스(2.8kg), 감홍·부사는 못난이 3kg입니다. 쿠폰이나 적립금으로 바꿔도 됩니다.</span></div>
-      <div class="g-card"><p class="g-tag">속도</p><b>수확까지 얼마나 걸릴까</b><span>샘플은 물만 주면 30일, 일주일에 한 번 사면 보름쯤입니다. 봄에 심어 가을에 거두는 1년 한 그루도 됩니다.</span></div>
+      <div class="g-card"><p class="g-tag">속도</p><b>수확까지 얼마나 걸릴까</b><span>샘플은 어린 나무부터 물만 주면 24일, 일주일에 한 번 사면 2주쯤입니다. 봄에 심어 가을에 거두는 1년 한 그루도 됩니다.</span></div>
       <div class="g-card"><p class="g-tag">과수원 소식</p><b>꽃 필 때·딸 때 사진</b><span>과수원 사진 몇 장이면 나무 소식에 진짜 거창 과수원이 들어가 ‘내 나무’ 느낌이 삽니다.</span></div>
     </div>
     <p class="g-note">샘플의 과수원·나무 그림은 이 샘플을 위해 새로 그렸고, 사과 사진은 열매나무 쇼핑몰 상품 사진입니다.</p>
@@ -204,6 +192,6 @@
   </div>
 </section>
 </div>
-<script src="app.js?v=2"></script>
+<script src="app.js?v=3"></script>
 </body>
 </html>

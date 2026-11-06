@@ -105,6 +105,10 @@ img{display:block;max-width:100%}
 
 .sign{position:absolute;left:5%;bottom:calc(20px + 3%);z-index:3;display:flex;flex-direction:column;align-items:center;transform:rotate(-4deg);transform-origin:50% 100%;transition:transform .5s cubic-bezier(.2,1.6,.4,1),opacity .4s}
 .sign.hide{transform:rotate(-4deg) scale(0);opacity:0}
+.sign{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.sign:active .sign-board{filter:brightness(.94)}
+.sign-edit{position:absolute;top:-11px;right:-13px;width:22px;height:22px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 2px 6px rgba(70,40,10,.22)}
+.sign-edit svg{width:13px;height:13px}
 .sign-board{display:block;background:linear-gradient(180deg,#C99862,#B07D4A);color:#FFF8EA;font-size:11px;font-weight:700;line-height:1.3;text-align:center;padding:6px 11px 7px;border-radius:7px;box-shadow:inset 0 -2px 0 rgba(0,0,0,.12),0 3px 8px rgba(70,40,10,.18);max-width:112px;overflow:hidden;text-overflow:ellipsis}
 .sign-board em{font-style:normal}
 .sign-board b{font-weight:900;font-size:12.5px}
@@ -128,6 +132,8 @@ img{display:block;max-width:100%}
 .tree .stg{opacity:0;transform:scale(.3);transform-box:fill-box;transform-origin:50% 100%;transition:opacity .45s,transform .8s cubic-bezier(.2,1.45,.35,1)}
 .tree.st-0 .g-seed,.tree.st-1 .g-sprout,.tree.st-2 .g-sap,.tree.st-3 .g-big,.tree.st-4 .g-big,.tree.st-5 .g-big{opacity:1;transform:none}
 .tree .sway{transform-box:view-box;transform-origin:150px 300px;animation:sway 6s ease-in-out infinite}
+.tree .lv{transform-box:fill-box;transform-origin:50% 70%;transition:transform .6s cubic-bezier(.2,1.6,.4,1)}
+.tree .lv.off{transform:scale(0)}
 @keyframes sway{0%,100%{transform:rotate(-.9deg)}50%{transform:rotate(.9deg)}}
 .tree .fl use{transform:scale(0);transform-box:fill-box;transform-origin:center;transition:transform .55s cubic-bezier(.2,1.7,.4,1);transition-delay:calc(var(--i)*30ms)}
 .tree.st-3 .fl use{transform:scale(1)}
@@ -403,7 +409,10 @@ img{display:block;max-width:100%}
 .path-l li{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10.5px;font-weight:700;color:var(--ink3);white-space:nowrap}
 .path-l li span{width:30px;height:30px;border-radius:50%;background:#FFF7EC;display:grid;place-items:center}
 .path-l li span svg{width:18px;height:18px}
-.path-s{margin:9px 0 0;font-size:12px;font-weight:700;color:#B9700C}
+.path-l li.pre{opacity:.45}
+.path-l li.start{color:#2F7D3E}
+.path-l li.start span{background:#EAF5E6;box-shadow:0 0 0 2px #A9D695}
+.path-s{margin:9px 0 0;font-size:12px;font-weight:700;color:#B9700C;line-height:1.5}
 @media (max-height:700px){.path{display:none}}
 
 /* ---------- 설명 ---------- */
