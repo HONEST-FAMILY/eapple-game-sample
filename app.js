@@ -327,13 +327,16 @@ let toastT;
 function toast(msg, ms) {
   E.toast.textContent = msg;
   E.toast.classList.add('on');
+  E.app.classList.add('toast-on');
   clearTimeout(toastT);
-  toastT = setTimeout(() => E.toast.classList.remove('on'), ms || 2300);
+  toastT = setTimeout(() => { E.toast.classList.remove('on'); E.app.classList.remove('toast-on'); }, ms || 2300);
 }
-let notiT;
+let notiT, notiGen = 0;
 function noti(msg, delay) {
+  const gen = notiGen;
   const show = (tries) => {
-    if ((modalOpen || sheetOpen) && tries < 30) { setTimeout(() => show(tries + 1), 400); return; }
+    if (gen !== notiGen) return;
+    if ((modalOpen || sheetOpen || !E.intro.classList.contains('off')) && tries < 30) { setTimeout(() => show(tries + 1), 400); return; }
     E.notiMsg.textContent = msg;
     E.noti.classList.add('on');
     E.app.classList.add('noti-on');
@@ -343,6 +346,7 @@ function noti(msg, delay) {
   setTimeout(() => show(0), delay || 0);
 }
 function hideNoti() { E.noti.classList.remove('on'); E.app.classList.remove('noti-on'); }
+function dropNoti() { notiGen++; hideNoti(); }
 
 let sheetOpen = false, modalOpen = false;
 function openSheet(t, p, body, bind) {
@@ -464,11 +468,12 @@ function pour(kind, side) {
     const relX = ox + dx * Math.cos(a) - dy * Math.sin(a), relY = oy + dx * Math.sin(a) + dy * Math.cos(a);
     const aimX = w * 0.5 + (side === 'l' ? -10 : 10);
     const aimY = h * [0.7, 0.62, 0.34, 0.1, 0.1, 0.1][idx];
+    treeSvg.classList.add('pouring');
     const tool = fxEl('tool', aimX - relX, aimY - relY, isSack ? SACK_BIG : ICON.canColor);
     tool.style.width = tw + 'px';
     tool.style.height = th + 'px';
     tool.firstChild.style.transform = `scaleX(${flip})`;
-    tool.animate([{ opacity: 0, transform: 'translate(10px,-14px) rotate(0)' }, { opacity: 1, transform: 'translate(0,0) rotate(0)', offset: 0.18 }, { opacity: 1, transform: `rotate(${rot}deg)`, offset: 0.32 }, { opacity: 1, transform: `rotate(${rot}deg)`, offset: 0.82 }, { opacity: 0, transform: 'translate(6px,-8px) rotate(0)' }], { duration: 1650, easing: 'ease-in-out' }).onfinish = () => tool.remove();
+    tool.animate([{ opacity: 0, transform: 'translate(10px,-14px) rotate(0)' }, { opacity: 1, transform: 'translate(0,0) rotate(0)', offset: 0.18 }, { opacity: 1, transform: `rotate(${rot}deg)`, offset: 0.32 }, { opacity: 1, transform: `rotate(${rot}deg)`, offset: 0.82 }, { opacity: 0, transform: 'translate(6px,-8px) rotate(0)' }], { duration: 1650, easing: 'ease-in-out' }).onfinish = () => { tool.remove(); treeSvg.classList.remove('pouring'); };
     const soilY = h * 0.925;
     const count = isSack ? 22 : 16;
     setTimeout(() => {
@@ -484,6 +489,7 @@ function pour(kind, side) {
       }
       setTimeout(() => {
         const rg = fxEl('ring', w / 2 - 20, soilY - 6, '');
+        if (isSack) rg.style.borderColor = 'rgba(176,122,58,.6)';
         rg.animate([{ transform: 'scale(.4)', opacity: 0.9 }, { transform: 'scale(2.2)', opacity: 0 }], { duration: 700, easing: 'ease-out' }).onfinish = () => rg.remove();
         if (!isSack) wetSoil();
       }, 520);
@@ -617,7 +623,7 @@ function askReset() {
     m.querySelector('#mYes').onclick = async () => {
       const snd = S.sound;
       S = def(); S.sound = snd; save();
-      closeModal(); closeSheet(); hideNoti();
+      closeModal(); closeSheet(); dropNoti();
       E.fx.innerHTML = '';
       E.btnMain.classList.remove('nudge');
       await sprout(450);
@@ -765,7 +771,7 @@ function showPage(id) {
 }
 function openIntro(page, mode) {
   introMode = mode;
-  closeSheet(); closeModal(); hideCoach();
+  closeSheet(); closeModal(); hideCoach(); dropNoti();
   E.intro.classList.remove('off');
   renderVars();
   E.nameIn.value = S.name || '';
@@ -777,7 +783,7 @@ function closeIntro() { E.intro.classList.add('off'); }
 let pickVar = 'hongro';
 function renderVars() {
   pickVar = S.variety || 'hongro';
-  E.vars.innerHTML = Object.entries(VAR).map(([k, v]) => `<button class="var ${k === pickVar ? 'on' : ''}" data-k="${k}"><img src="${v.img}" alt="${v.n} 사과"><span><span class="vn">${v.n}</span><span class="vd" style="display:block">${v.desc} · 당도${NB}${v.brix}${NB}브릭스</span><span class="vr" style="display:block">다 키우면 ${v.rw}</span></span><span class="chk">${ICON.tick}</span></button>`).join('');
+  E.vars.innerHTML = Object.entries(VAR).map(([k, v]) => `<button class="var ${k === pickVar ? 'on' : ''}" data-k="${k}"><img src="${v.img}" alt="${v.n} 사과"><span><span class="vn">${v.n}<span class="tag">당도 ${v.brix}브릭스</span></span><span class="vd" style="display:block">${v.desc}</span><span class="vr" style="display:block">다 키우면 ${v.rw}</span></span><span class="chk">${ICON.tick}</span></button>`).join('');
   E.vars.querySelectorAll('.var').forEach((b) => {
     b.onclick = () => { sfx.tap(); pickVar = b.dataset.k; E.vars.querySelectorAll('.var').forEach((x) => x.classList.toggle('on', x === b)); updatePreview(); };
   });

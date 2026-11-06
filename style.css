@@ -94,7 +94,8 @@ img{display:block;max-width:100%}
 .demo .d-main{background:#3A332C;color:#fff}
 .demo .d-main:active{background:#1F1A16}
 
-.season{position:absolute;left:12px;top:54px;z-index:4;display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#41513F;background:rgba(255,255,255,.72);padding:5px 10px 5px 7px;border-radius:999px}
+.season{position:absolute;left:12px;top:54px;z-index:4;display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#41513F;background:rgba(255,255,255,.72);padding:5px 10px 5px 7px;border-radius:999px;transition:opacity .25s}
+#app.toast-on .season{opacity:0}
 .season i{width:16px;height:16px;display:grid;place-items:center}
 
 .tree-wrap{position:absolute;left:50%;bottom:calc(14px + 1.5%);height:min(82%,390px);aspect-ratio:300/320;transform:translateX(-50%);z-index:2}
@@ -122,7 +123,7 @@ img{display:block;max-width:100%}
 .crate.bump{animation:bump .4s}
 @keyframes bump{40%{transform:scale(1.08,.94)}}
 
-.toast{position:absolute;left:50%;top:54px;transform:translate(-50%,-12px);opacity:0;z-index:12;background:rgba(42,38,34,.92);color:#fff;font-size:13px;font-weight:700;padding:10px 16px;border-radius:999px;white-space:nowrap;transition:opacity .3s,transform .35s;pointer-events:none;max-width:92%;overflow:hidden;text-overflow:ellipsis}
+.toast{position:absolute;left:50%;top:54px;transform:translate(-50%,-12px);opacity:0;z-index:12;background:#2A2622;color:#fff;font-size:13px;font-weight:700;padding:10px 16px;border-radius:999px;white-space:nowrap;transition:opacity .3s,transform .35s;pointer-events:none;max-width:92%;overflow:hidden;text-overflow:ellipsis}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 
 /* ---------- 나무 그림 ---------- */
@@ -148,6 +149,8 @@ img{display:block;max-width:100%}
 @keyframes tw{0%,100%{opacity:0;transform:scale(.4)}50%{opacity:1;transform:scale(1)}}
 .tree .glint{transform-box:fill-box;transform-origin:center}
 .tree .ghost{opacity:0;transition:opacity .6s}
+.tree .ghost text{transition:opacity .3s}
+.tree.pouring .ghost text{opacity:0}
 .tree.st-0 .ghost,.tree.st-1 .ghost,.tree.st-2 .ghost{opacity:1}
 .modal .ghost,.hero .ghost{display:none}
 .modal .m-crate{width:150px;margin:-4px auto 6px}
@@ -384,7 +387,7 @@ img{display:block;max-width:100%}
 .var{display:flex;align-items:center;gap:12px;text-align:left;background:#fff;border:2px solid #F0E6D8;border-radius:18px;padding:10px;transition:border-color .2s,box-shadow .2s,transform .12s;position:relative}
 .var:active{transform:scale(.985)}
 .var img{width:76px;height:76px;border-radius:13px;object-fit:cover;flex:none}
-.var .vn{display:flex;align-items:center;gap:6px;font-size:17px;font-weight:900;letter-spacing:-.03em}
+.var .vn{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:17px;font-weight:900;letter-spacing:-.03em}
 .var .vd{margin-top:3px;font-size:12.5px;color:var(--ink2);font-weight:600}
 .var .vr{margin-top:5px;font-size:11.5px;color:#B9700C;font-weight:800}
 .var.on{border-color:var(--brand);box-shadow:0 6px 16px rgba(255,153,13,.18)}
